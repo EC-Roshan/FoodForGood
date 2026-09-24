@@ -1,0 +1,456 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family: "DM Sans", sans-serif;
+
+    background: #f8f6ef;
+
+    color: #172321;
+
+}
+
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar {
+
+    width: 90%;
+    max-width: 1180px;
+
+    height: 90px;
+
+    margin: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+}
+
+
+.logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    font-family: "Space Grotesk", sans-serif;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+}
+
+
+.logo-mark {
+
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+
+    place-items: center;
+
+    background: #174c42;
+
+    color: #c7e86b;
+
+    border-radius: 12px;
+
+    font-size: 20px;
+
+}
+
+
+.back-home {
+
+    text-decoration: none;
+
+    color: #64736d;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.back-home:hover {
+
+    color: #174c42;
+
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.login-container {
+
+    width: 90%;
+
+    max-width: 1150px;
+
+    margin: auto;
+
+    padding: 55px 0 100px;
+
+}
+
+
+/* =========================
+   HEADING
+========================= */
+
+.login-heading {
+
+    text-align: center;
+
+    margin-bottom: 55px;
+
+}
+
+
+.small-title {
+
+    color: #174c42;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+}
+
+
+.login-heading h1 {
+
+    font-family: "Space Grotesk", sans-serif;
+
+    font-size: 55px;
+
+    line-height: 1;
+
+    letter-spacing: -3px;
+
+    margin: 15px 0 18px;
+
+}
+
+
+.login-heading h1 span {
+
+    color: #174c42;
+
+}
+
+
+.login-heading p {
+
+    color: #64736d;
+
+    font-size: 15px;
+
+}
+
+
+/* =========================
+   ROLE CARDS
+========================= */
+
+.role-container {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 22px;
+
+}
+
+
+.role-card {
+
+    background: white;
+
+    border: 1px solid #dfe3da;
+
+    border-radius: 25px;
+
+    padding: 30px;
+
+    min-height: 460px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    transition: 0.3s;
+
+}
+
+
+.role-card:hover {
+
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 20px 45px
+        rgba(23, 76, 66, 0.12);
+
+    border-color: #174c42;
+
+}
+
+
+/* =========================
+   ICON
+========================= */
+
+.role-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 16px;
+
+    font-size: 26px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.donor-card .role-icon {
+
+    background: #f8dfcf;
+
+}
+
+
+.ngo-card .role-icon {
+
+    background: #dce8d8;
+
+}
+
+
+.admin-card .role-icon {
+
+    background: #e8e2f4;
+
+}
+
+
+/* =========================
+   CONTENT
+========================= */
+
+.role-label {
+
+    color: #64736d;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+}
+
+
+.role-card h2 {
+
+    font-family: "Space Grotesk", sans-serif;
+
+    font-size: 30px;
+
+    margin: 8px 0 12px;
+
+}
+
+
+.role-card p {
+
+    color: #64736d;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* =========================
+   LIST
+========================= */
+
+.role-card ul {
+
+    list-style: none;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+.role-card li {
+
+    font-size: 13px;
+
+    color: #34443f;
+
+}
+
+
+.role-card li::before {
+
+    content: "✓";
+
+    display: inline-grid;
+
+    place-items: center;
+
+    width: 19px;
+
+    height: 19px;
+
+    margin-right: 8px;
+
+    border-radius: 50%;
+
+    background: #e4efcf;
+
+    color: #174c42;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.login-btn {
+
+    margin-top: auto;
+
+    padding: 14px 17px;
+
+    background: #174c42;
+
+    color: white;
+
+    border-radius: 13px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+}
+
+
+.login-btn:hover {
+
+    background: #0e392f;
+
+}
+
+
+.login-btn span {
+
+    color: #c7e86b;
+
+    font-size: 18px;
+
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+    .role-container {
+
+        grid-template-columns: 1fr;
+
+        max-width: 550px;
+
+        margin: auto;
+
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .navbar {
+
+        height: 75px;
+
+    }
+
+
+    .login-container {
+
+        padding-top: 35px;
+
+    }
+
+
+    .login-heading h1 {
+
+        font-size: 40px;
+
+        letter-spacing: -2px;
+
+    }
+
+
+    .role-card {
+
+        padding: 25px;
+
+    }
+
+}
