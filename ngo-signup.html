@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create NGO Account | Food For Good</title>
+
+    <link rel="stylesheet" href="role-login.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+</head>
+
+
+<body>
+
+
+    <header class="navbar">
+
+        <div class="logo">
+
+            <span class="logo-mark">
+                F
+            </span>
+
+            Food For Good
+
+        </div>
+
+
+        <a href="ngo-login.html"
+           class="back">
+
+            ← Back
+
+        </a>
+
+    </header>
+
+
+
+    <main class="login-page">
+
+
+        <div class="login-box signup-box">
+
+
+            <div class="role-icon ngo-icon">
+                🤝
+            </div>
+
+
+            <span class="role-label">
+                FOOD RECEIVING ORGANIZATION
+            </span>
+
+
+            <h1>
+                Create NGO Account
+            </h1>
+
+
+            <p class="intro">
+                Register your organization to discover and collect surplus food donations.
+            </p>
+
+
+
+            <form action="ngo-login.html" method="get" novalidate>
+
+
+                <!-- ── Organization Details ────────────────────────── -->
+
+                <p class="form-section">Organization Details</p>
+
+
+                <label for="org-name">
+                    NGO / Organization Name <span class="req">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="org-name"
+                    name="org_name"
+                    placeholder="Registered name of your NGO or organization"
+                    required
+                    autocomplete="organization"
+                >
+
+
+                <label for="reg-number">
+                    Registration Number <span class="req">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="reg-number"
+                    name="reg_number"
+                    placeholder="Darpan ID / Trust / Society registration number"
+                    required
+                    autocomplete="off"
+                    title="Enter your NGO's official registration number (Darpan ID, Trust reg. no., Society reg. no., etc.)"
+                >
+                <span class="field-hint">Darpan ID, Trust reg. no., Society reg. no., or equivalent</span>
+
+
+                <div class="form-row">
+
+                    <div class="form-col">
+
+                        <label for="contact-name">
+                            Contact Person Name <span class="req">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="contact-name"
+                            name="contact_name"
+                            placeholder="Full name"
+                            required
+                            autocomplete="name"
+                        >
+
+                    </div>
+
+                    <div class="form-col">
+
+                        <label for="designation">
+                            Designation
+                            <span class="optional">(optional)</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="designation"
+                            name="designation"
+                            placeholder="e.g. Director, Manager"
+                            autocomplete="organization-title"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- ── Contact ──────────────────────────────────────── -->
+
+                <p class="form-section">Contact</p>
+
+
+                <label for="email">
+                    Email Address <span class="req">*</span>
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="contact@yourorg.org"
+                    required
+                    autocomplete="email"
+                    inputmode="email"
+                >
+
+
+                <label for="phone">
+                    Phone Number <span class="req">*</span>
+                </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="10-digit mobile number (e.g. 9876543210)"
+                    required
+                    pattern="[6-9][0-9]{9}"
+                    maxlength="10"
+                    autocomplete="tel-national"
+                    inputmode="numeric"
+                    title="Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9"
+                >
+                <span class="field-hint">Start with 6–9 · exactly 10 digits · no spaces or dashes</span>
+
+
+                <!-- ── Address ─────────────────────────────────────── -->
+
+                <p class="form-section">Address</p>
+
+
+                <label for="address">
+                    Address <span class="req">*</span>
+                </label>
+
+                <textarea
+                    id="address"
+                    name="address"
+                    placeholder="Street / locality / building name"
+                    required
+                    rows="3"
+                    autocomplete="street-address"
+                ></textarea>
+
+
+                <div class="form-row">
+
+                    <div class="form-col">
+
+                        <label for="city">
+                            City <span class="req">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            placeholder="City"
+                            required
+                            autocomplete="address-level2"
+                        >
+
+                    </div>
+
+                    <div class="form-col">
+
+                        <label for="pincode">
+                            Pincode <span class="req">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pincode"
+                            name="pincode"
+                            placeholder="6-digit pincode"
+                            required
+                            pattern="[0-9]{6}"
+                            maxlength="6"
+                            autocomplete="postal-code"
+                            inputmode="numeric"
+                            title="Enter a valid 6-digit Indian pincode"
+                        >
+                        <span class="field-hint">Exactly 6 digits</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ── Operations ─────────────────────────────────── -->
+
+                <p class="form-section">Operations</p>
+
+
+                <label for="people-served">
+                    Number of People Served Daily <span class="req">*</span>
+                </label>
+
+                <input
+                    type="number"
+                    id="people-served"
+                    name="people_served"
+                    placeholder="e.g. 200"
+                    required
+                    min="1"
+                    autocomplete="off"
+                    inputmode="numeric"
+                    title="Enter the approximate number of people your organization serves per day"
+                >
+                <span class="field-hint">Approximate daily beneficiary count · minimum 1</span>
+
+
+                <label>
+                    Pickup Capability <span class="req">*</span>
+                </label>
+
+                <div class="pickup-options">
+
+                    <input
+                        type="radio"
+                        id="pickup-own"
+                        name="pickup_capability"
+                        value="own_vehicle"
+                        required
+                    >
+                    <label for="pickup-own" class="pickup-card">
+                        <span class="pickup-icon">🚐</span>
+                        <span class="pickup-text">We have our own vehicle</span>
+                    </label>
+
+                    <input
+                        type="radio"
+                        id="pickup-donor"
+                        name="pickup_capability"
+                        value="need_delivery"
+                        required
+                    >
+                    <label for="pickup-donor" class="pickup-card">
+                        <span class="pickup-icon">🚚</span>
+                        <span class="pickup-text">We need donors to deliver</span>
+                    </label>
+
+                </div>
+
+
+                <!-- ── Documents ──────────────────────────────────── -->
+
+                <p class="form-section">Documents</p>
+
+
+                <label for="reg-cert">
+                    Registration Certificate
+                    <span class="optional">(optional)</span>
+                </label>
+
+                <label for="reg-cert" class="file-upload-area">
+
+                    <span class="file-upload-icon">📄</span>
+
+                    <span class="file-upload-text">
+                        Click to upload your registration certificate
+                    </span>
+
+                    <span class="file-upload-hint">
+                        PDF, JPG or PNG · max 5 MB
+                    </span>
+
+                    <input
+                        type="file"
+                        id="reg-cert"
+                        name="reg_cert"
+                        accept=".pdf,.jpg,.png"
+                        autocomplete="off"
+                    >
+
+                </label>
+
+
+                <!-- ── Account Security ───────────────────────────── -->
+
+                <p class="form-section">Account Security</p>
+
+
+                <label for="password">
+                    Password <span class="req">*</span>
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Minimum 8 characters"
+                    required
+                    minlength="8"
+                    autocomplete="new-password"
+                    title="Password must be at least 8 characters long"
+                >
+                <span class="field-hint">At least 8 characters</span>
+
+
+                <label for="confirm-password">
+                    Confirm Password <span class="req">*</span>
+                </label>
+
+                <input
+                    type="password"
+                    id="confirm-password"
+                    name="confirm_password"
+                    placeholder="Re-enter your password"
+                    required
+                    minlength="8"
+                    autocomplete="new-password"
+                    title="Re-enter your password to confirm"
+                >
+
+
+                <!-- ── Agreement ──────────────────────────────────── -->
+
+                <label class="checkbox-label">
+
+                    <input
+                        type="checkbox"
+                        id="agree"
+                        name="agree"
+                        required
+                    >
+
+                    <span>
+                        I confirm the above details are accurate and agree to the
+                        <a href="#" class="inline-link">Terms &amp; Conditions</a>
+                    </span>
+
+                </label>
+
+
+                <button type="submit">
+
+                    Create NGO Account
+
+                    <span>→</span>
+
+                </button>
+
+
+            </form>
+
+
+
+            <p class="bottom-text">
+
+                Already have an NGO account?
+
+                <a href="ngo-login.html">
+                    Login
+                </a>
+
+            </p>
+
+
+        </div>
+
+
+    </main>
+
+
+</body>
+
+</html>
+

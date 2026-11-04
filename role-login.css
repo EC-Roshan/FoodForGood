@@ -222,3 +222,303 @@ form button span {
         font-size: 32px; 
     }
 }
+
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   SIGNUP EXTENSIONS — added for donor-signup.html & ngo-signup.html
+   All new rules below; existing rules above are untouched.
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ── Wider card for signup ─────────────────────────────────────── */
+
+.signup-box {
+    max-width: 620px;
+}
+
+
+/* ── Extend input look to all relevant field types ─────────────── */
+
+form input[type="text"],
+form input[type="tel"],
+form input[type="number"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #dfe3da;
+    border-radius: 12px;
+    background: #f8f6ef;
+    outline: none;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #172321;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+form input[type="text"]:focus,
+form input[type="tel"]:focus,
+form input[type="number"]:focus,
+form select:focus,
+form textarea:focus {
+    border-color: #174c42;
+    background: white;
+}
+
+/* :user-invalid — red border only after user interaction */
+form input[type="text"]:user-invalid,
+form input[type="tel"]:user-invalid,
+form input[type="number"]:user-invalid,
+form input[type="email"]:user-invalid,
+form input[type="password"]:user-invalid,
+form select:user-invalid,
+form textarea:user-invalid {
+    border-color: #c0392b;
+}
+
+/* Keep textarea resizable vertically only */
+form textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+}
+
+/* Select: custom dropdown arrow */
+form select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364736d' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    cursor: pointer;
+}
+
+form select option[value=""][disabled] {
+    color: #9eada7;
+}
+
+
+/* ── Section headings ──────────────────────────────────────────── */
+
+.form-section {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: #174c42;
+    margin: 28px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #dfe3da;
+}
+
+.form-section:first-of-type {
+    margin-top: 4px;
+}
+
+
+/* ── 2-column grid row ─────────────────────────────────────────── */
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 18px;
+}
+
+.form-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-col input,
+.form-col select {
+    width: 100%;
+}
+
+
+/* ── Hint text under patterned fields ──────────────────────────── */
+
+.field-hint {
+    display: block;
+    font-size: 12px;
+    color: #64736d;
+    margin-top: -14px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+
+/* ── Required star & optional tag ─────────────────────────────── */
+
+.req {
+    color: #c0392b;
+    margin-left: 2px;
+}
+
+.optional {
+    font-weight: 400;
+    color: #9eada7;
+    font-size: 12px;
+}
+
+
+/* ── Agreement checkbox ────────────────────────────────────────── */
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #64736d;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin-top: 2px;
+    accent-color: #174c42;
+    cursor: pointer;
+}
+
+.inline-link {
+    color: #174c42;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.inline-link:hover {
+    text-decoration: underline;
+}
+
+
+/* ── Pickup capability radio cards (NGO signup) ────────────────── */
+
+.pickup-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+/* Hide the native radio button */
+.pickup-options input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+.pickup-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 18px 12px;
+    border: 2px solid #dfe3da;
+    border-radius: 14px;
+    background: #f8f6ef;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64736d;
+    margin-bottom: 0;
+}
+
+.pickup-card:hover {
+    border-color: #174c42;
+    background: #f0f7ee;
+}
+
+.pickup-options input[type="radio"]:checked + .pickup-card {
+    border-color: #174c42;
+    background: #eaf4e8;
+    color: #174c42;
+    box-shadow: 0 0 0 3px rgba(23, 76, 66, 0.12);
+}
+
+.pickup-icon {
+    font-size: 26px;
+    line-height: 1;
+}
+
+.pickup-text {
+    line-height: 1.4;
+}
+
+
+/* ── File upload area ──────────────────────────────────────────── */
+
+.file-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 28px 20px;
+    border: 2px dashed #dfe3da;
+    border-radius: 14px;
+    background: #f8f6ef;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: border-color 0.18s, background 0.18s;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.file-upload-area:hover {
+    border-color: #174c42;
+    background: #f0f7ee;
+}
+
+.file-upload-icon {
+    font-size: 30px;
+    line-height: 1;
+}
+
+.file-upload-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #174c42;
+}
+
+.file-upload-hint {
+    font-size: 12px;
+    color: #9eada7;
+}
+
+/* Hide the native file input visually but keep it accessible */
+.file-upload-area input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+/* ── Responsive: collapse 2-col grids below 550 px ────────────── */
+
+@media (max-width: 550px) {
+
+    .signup-box {
+        padding: 28px 22px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .pickup-options {
+        grid-template-columns: 1fr;
+    }
+}
