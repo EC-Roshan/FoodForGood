@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Food For Good</title>
+
+    <link rel="stylesheet" href="role-login.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <script src="js/store.js" defer></script>
+    <script src="js/common.js" defer></script>
+</head>
+
+<body class="dash-body">
+
+    <!-- TOP NAVBAR -->
+    <header class="dash-navbar">
+        <div class="dash-logo">
+            <span class="logo-mark">F</span>
+            Food For Good
+        </div>
+        <div class="dash-user">
+            <span class="dash-user-name">System Administrator</span>
+            <button class="dash-logout-btn" id="admin-logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <main class="login-page" style="min-height: calc(100vh - 64px); padding: 40px 20px;">
+
+        <div style="max-width: 900px; width: 100%; margin: 0 auto;">
+
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 35px;">
+                <div class="role-icon admin-icon" style="margin: 0 auto 16px;">
+                    🛡️
+                </div>
+                <span class="role-label">
+                    PLATFORM MANAGEMENT
+                </span>
+                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 36px; margin: 8px 0 6px; color: #172321;">
+                    Welcome, Admin
+                </h1>
+                <p style="color: #64736d; font-size: 15px;">
+                    Platform statistics and management overview
+                </p>
+            </div>
+
+            <!-- 4 Read-only Stat Cards -->
+            <div class="stat-grid" style="margin-bottom: 30px;">
+
+                <div class="stat-card">
+                    <div class="stat-icon">🍱</div>
+                    <div class="stat-value" id="stat-donors">0</div>
+                    <div class="stat-label">Registered Donors</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-value" id="stat-pending-ngos" style="color: #f28b55;">0</div>
+                    <div class="stat-label">NGOs Pending Verification</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-value" id="stat-active-listings">0</div>
+                    <div class="stat-label">Active Listings</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🌟</div>
+                    <div class="stat-value" id="stat-distributions">0</div>
+                    <div class="stat-label">Distributions Tracked</div>
+                </div>
+
+            </div>
+
+            <!-- Coming Soon Card -->
+            <div style="background: #ffffff; border: 1px dashed #dfe3da; border-radius: 22px; padding: 36px 28px; text-align: center; box-shadow: 0 10px 30px rgba(23, 76, 66, 0.05);">
+                <div style="font-size: 38px; margin-bottom: 12px;">📊</div>
+                <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; color: #174c42; margin-bottom: 8px;">
+                    Full Admin Panel Coming Soon
+                </h2>
+                <p style="color: #64736d; font-size: 14px; line-height: 1.7; max-width: 520px; margin: 0 auto 24px;">
+                    The full administration module will allow approving and verifying NGO documentation, managing user roles, monitoring donation safety, and exporting platform-wide impact audits.
+                </p>
+                <button type="button" id="admin-page-logout" class="dash-logout-btn" style="padding: 12px 28px; font-size: 14px;">
+                    Logout
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Guard: role must be 'admin'
+            const session = FFGStore.getSession();
+            if (!session || session.role !== 'admin') {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            // Read stats from FFGStore
+            const donors = FFGStore.getAll('ffg_donors') || [];
+            const ngos = FFGStore.getAll('ffg_ngos') || [];
+            const listings = FFGStore.getAll('ffg_listings') || [];
+            const distributions = FFGStore.getAll('ffg_distributions') || [];
+
+            const pendingNgos = ngos.filter(n => n.verification_status === 'pending');
+            const activeListings = listings.filter(l => l.status === 'available' || l.status === 'requested');
+            const completedDistributions = distributions.length || listings.filter(l => l.status === 'distributed').length;
+
+            document.getElementById('stat-donors').textContent = donors.length;
+            document.getElementById('stat-pending-ngos').textContent = pendingNgos.length;
+            document.getElementById('stat-active-listings').textContent = activeListings.length;
+            document.getElementById('stat-distributions').textContent = completedDistributions;
+
+            document.getElementById('admin-logout-btn').addEventListener('click', () => FFGStore.logout());
+            document.getElementById('admin-page-logout').addEventListener('click', () => FFGStore.logout());
+        });
+    </script>
+
+</body>
+
+</html>
+

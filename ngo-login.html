@@ -11,10 +11,14 @@
     <title>NGO Login | Food For Good</title>
 
     <link rel="stylesheet" href="role-login.css">
-
+    <link rel="stylesheet" href="dashboard.css">
 
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
           rel="stylesheet">
+
+    <script src="js/store.js" defer></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/ngo-login.js" defer></script>
 
 </head>
 
@@ -74,60 +78,64 @@
 
 
 
-            <form>
+            <form id="ngo-login-form">
 
-
-                <label>
-                    Email Address
-                </label>
-
+                <label for="email">Email Address</label>
                 <input
                     type="email"
+                    id="email"
+                    name="email"
                     placeholder="Enter your email"
                     required
+                    autocomplete="email"
                 >
 
-
-
-                <label>
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    placeholder="Enter your password"
-                    required
-                >
-
-
-
-                <div class="options">
-
-                    <label class="remember">
-
-                        <input type="checkbox">
-
-                        Remember me
-
-                    </label>
-
-
-                    <a href="#">
-                        Forgot Password?
-                    </a>
-
+                <label for="password">Password</label>
+                <div class="pw-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                        minlength="8"
+                        autocomplete="current-password"
+                    >
+                    <button type="button" class="pw-toggle" aria-label="Show password" data-target="password">👁</button>
                 </div>
 
+                <div id="login-error" class="form-error" style="display:none"></div>
 
+                <div class="options">
+                    <label class="remember">
+                        <input type="checkbox" id="remember" name="remember">
+                        Remember me
+                    </label>
+                    <a href="#" id="forgot-link">Forgot Password?</a>
+                </div>
+
+                <!-- Forgot password inline panel -->
+                <div id="forgot-panel" style="display:none" class="forgot-panel">
+                    <p class="form-section" style="margin-top:0">Reset Password</p>
+                    <p style="font-size:13px;color:#64736d;margin-bottom:14px">Enter your registered email and phone number to reset your password.</p>
+                    <label for="fp-email">Email Address</label>
+                    <input type="email" id="fp-email" placeholder="Registered email" autocomplete="email">
+                    <label for="fp-phone">Phone Number</label>
+                    <input type="tel" id="fp-phone" placeholder="Registered 10-digit mobile" pattern="[6-9][0-9]{9}" maxlength="10" inputmode="numeric">
+                    <label for="fp-new-pw">New Password</label>
+                    <input type="password" id="fp-new-pw" placeholder="New password (min 8 chars)" minlength="8" autocomplete="new-password">
+                    <label for="fp-confirm-pw">Confirm New Password</label>
+                    <input type="password" id="fp-confirm-pw" placeholder="Re-enter new password" autocomplete="new-password">
+                    <div id="fp-error" class="form-error" style="display:none"></div>
+                    <div id="fp-success" class="form-message form-message--success" style="display:none"></div>
+                    <button type="button" id="fp-submit" class="fp-btn">Reset Password</button>
+                    <a href="#" id="fp-cancel" style="display:block;text-align:center;margin-top:12px;font-size:13px;color:#64736d">← Back to Login</a>
+                </div>
 
                 <button type="submit">
-
                     Login as NGO
-
                     <span>→</span>
-
                 </button>
-
 
             </form>
 

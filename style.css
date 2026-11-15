@@ -445,19 +445,23 @@ h1 span::after {
 
   width: min(440px, 100%);
 
-  min-height: 450px;
+  min-height: 520px;
 
   background: var(--green);
 
   border-radius: 42px;
 
-  padding: 30px;
+  padding: 30px 30px 36px;
 
   position: relative;
 
   overflow: hidden;
 
   box-shadow: 0 25px 60px rgba(23,76,66,0.18);
+
+  display: flex;
+
+  flex-direction: column;
 
 }
 
@@ -480,6 +484,8 @@ h1 span::after {
 
   top: -120px;
 
+  pointer-events: none;
+
 }
 
 
@@ -500,6 +506,8 @@ h1 span::after {
   left: -110px;
 
   bottom: -120px;
+
+  pointer-events: none;
 
 }
 
@@ -591,6 +599,43 @@ h1 span::after {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 1.2px;
+}
+
+.connection {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.connection-item {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.3px;
+}
+
+.connection-arrow {
+  color: var(--lime);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.bottom-label {
+  position: relative;
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+  margin-top: 14px;
 }
 
 /* FLOATING */
@@ -1587,4 +1632,263 @@ h1 span::after {
 
   }
 
+}
+
+
+/* ============================================================
+   INTERACTIVE EXTENSIONS — Added for Part 2
+   Sticky navbar, mobile menu, animations, counters, back-to-top
+   ============================================================ */
+
+/* Sticky Navbar */
+header.navbar {
+  position: sticky;
+  top: 0;
+  background: var(--cream);
+  z-index: 100;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+
+header.navbar.navbar-scrolled {
+  box-shadow: 0 4px 20px rgba(23, 76, 66, 0.08);
+  background: rgba(248, 246, 239, 0.96);
+  backdrop-filter: blur(8px);
+}
+
+/* Active Nav Link */
+.nav-links a.nav-link-active {
+  color: var(--green);
+  font-weight: 700;
+  position: relative;
+}
+
+.nav-links a.nav-link-active::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--green);
+  border-radius: 2px;
+}
+
+/* Mobile Nav Toggle */
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: var(--green);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 10px;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.nav-toggle:hover {
+  background: rgba(23, 76, 66, 0.08);
+}
+
+@media (max-width: 900px) {
+  .nav-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 85px;
+    left: 5%;
+    right: 5%;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 20px 45px rgba(23, 76, 66, 0.15);
+    z-index: 99;
+  }
+
+  .nav-links.nav-open {
+    display: flex;
+    animation: fadeDownMenu 0.25s ease forwards;
+  }
+
+  .nav-links a {
+    font-size: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f2f4ef;
+  }
+
+  .nav-links a:last-child {
+    border-bottom: none;
+  }
+}
+
+@keyframes fadeDownMenu {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scroll Animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Back to Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 46px;
+  height: 46px;
+  background: var(--green);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(23, 76, 66, 0.25);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(15px);
+  transition: opacity 0.3s, transform 0.3s, visibility 0.3s, background 0.2s;
+  z-index: 90;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: var(--dark-green);
+  transform: translateY(-2px);
+}
+
+/* Impact Counters Section */
+.impact-section {
+  padding: 80px 0 120px;
+}
+
+.impact-counter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.impact-counter-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 32px 24px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 30px rgba(23, 76, 66, 0.04);
+}
+
+.impact-counter-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(23, 76, 66, 0.08);
+}
+
+.impact-counter-number {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(38px, 4vw, 52px);
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.impact-counter-label {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .impact-counter-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .impact-counter-grid {
+    grid-template-columns: 1fr;
+  }
+  .impact-counter-card {
+    padding: 24px 18px;
+  }
+}
+
+/* Global Toast Notifications */
+.ffg-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  color: #ffffff;
+  background: var(--green);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  pointer-events: none;
+}
+
+.ffg-toast--show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.ffg-toast--success {
+  background: var(--green);
+  border: 1px solid var(--lime);
+  color: #ffffff;
+}
+
+.ffg-toast--error {
+  background: #c0392b;
+  color: #ffffff;
+}
+
+.ffg-toast--info {
+  background: #0e392f;
+  color: #ffffff;
 }

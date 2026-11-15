@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Dashboard | Food For Good</title>
+
+    <link rel="stylesheet" href="role-login.css">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <script src="js/store.js" defer></script>
+    <script src="js/common.js" defer></script>
+</head>
+
+<body class="dash-body">
+
+    <!-- TOP NAVBAR -->
+    <header class="dash-navbar">
+        <div class="dash-logo">
+            <span class="logo-mark">F</span>
+            Food For Good
+        </div>
+        <div class="dash-user">
+            <span class="dash-user-name" id="ngo-name-nav">Loading…</span>
+            <button class="dash-logout-btn" id="ngo-logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <main class="login-page" style="min-height: calc(100vh - 64px); padding: 50px 20px;">
+
+        <div class="login-box signup-box" style="text-align: center; max-width: 600px;">
+
+            <div class="role-icon ngo-icon" style="margin: 0 auto 20px;">
+                🤝
+            </div>
+
+            <span class="role-label">
+                FOOD RECEIVING ORGANIZATION
+            </span>
+
+            <h1 id="ngo-welcome" style="margin: 12px 0 16px;">
+                Welcome, NGO
+            </h1>
+
+            <!-- Verification Status Badge -->
+            <div style="margin-bottom: 24px;">
+                <span id="ngo-status-badge" class="status-badge" style="padding: 6px 16px; font-size: 13px;">
+                    Verification Status: Loading…
+                </span>
+            </div>
+
+            <!-- Coming Soon Card -->
+            <div style="background: #f8f6ef; border: 1px dashed #dfe3da; border-radius: 18px; padding: 32px 24px; margin-bottom: 24px;">
+                <div style="font-size: 36px; margin-bottom: 12px;">🚧</div>
+                <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; color: #174c42; margin-bottom: 8px;">
+                    NGO Dashboard Coming Soon
+                </h2>
+                <p style="color: #64736d; font-size: 14px; line-height: 1.6; max-width: 440px; margin: 0 auto;">
+                    We are building tools for NGOs to discover real-time surplus food donations, send instant pickup requests, and coordinate volunteer collection.
+                </p>
+            </div>
+
+            <button type="button" id="ngo-page-logout-btn" style="width: auto; padding: 12px 28px; display: inline-block;">
+                Logout
+            </button>
+
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Guard: role must be 'ngo'
+            const session = FFGStore.getSession();
+            if (!session || session.role !== 'ngo') {
+                window.location.href = 'ngo-login.html';
+                return;
+            }
+
+            const user = FFGStore.getById('ffg_users', session.user_id);
+            const ngo = FFGStore.findBy('ffg_ngos', 'user_id', session.user_id);
+
+            const ngoName = ngo ? ngo.ngo_name : (user ? user.full_name : 'NGO Partner');
+            const vStatus = ngo ? (ngo.verification_status || 'pending') : (user && user.status === 'active' ? 'verified' : 'pending');
+
+            document.getElementById('ngo-name-nav').textContent = ngoName;
+            document.getElementById('ngo-welcome').textContent = `Welcome, ${ngoName}!`;
+
+            const badge = document.getElementById('ngo-status-badge');
+            if (vStatus === 'verified') {
+                badge.textContent = '✓ Verified Organization';
+                badge.style.background = '#dcf5e4';
+                badge.style.color = '#174c42';
+            } else if (vStatus === 'rejected') {
+                badge.textContent = '✕ Verification Rejected';
+                badge.style.background = '#fce8e8';
+                badge.style.color = '#c0392b';
+            } else {
+                badge.textContent = '⏳ Verification Pending Admin Review';
+                badge.style.background = '#fff3cd';
+                badge.style.color = '#856404';
+            }
+
+            document.getElementById('ngo-logout-btn').addEventListener('click', () => FFGStore.logout());
+            document.getElementById('ngo-page-logout-btn').addEventListener('click', () => FFGStore.logout());
+        });
+    </script>
+
+</body>
+
+</html>
+

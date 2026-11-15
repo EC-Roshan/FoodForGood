@@ -11,11 +11,14 @@
     <title>Admin Login | Food For Good</title>
 
     <link rel="stylesheet" href="role-login.css">
-
- 
+    <link rel="stylesheet" href="dashboard.css">
 
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
           rel="stylesheet">
+
+    <script src="js/store.js" defer></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/admin-login.js" defer></script>
 
 </head>
 
@@ -75,70 +78,55 @@
 
 
 
-            <form>
+            <form id="admin-login-form">
 
-
-                <label>
-                    Admin Email
-                </label>
-
+                <label for="email">Admin Email</label>
                 <input
                     type="email"
+                    id="email"
+                    name="email"
                     placeholder="Enter admin email"
                     required
+                    autocomplete="email"
                 >
 
-
-
-                <label>
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    placeholder="Enter admin password"
-                    required
-                >
-
-
-
-                <div class="options">
-
-                    <label class="remember">
-
-                        <input type="checkbox">
-
-                        Remember me
-
-                    </label>
-
-
-                    <a href="#">
-                        Forgot Password?
-                    </a>
-
+                <label for="password">Password</label>
+                <div class="pw-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter admin password"
+                        required
+                        minlength="8"
+                        autocomplete="current-password"
+                    >
+                    <button type="button" class="pw-toggle" aria-label="Show password" data-target="password">👁</button>
                 </div>
 
+                <div id="login-error" class="form-error" style="display:none"></div>
 
+                <div class="options">
+                    <label class="remember">
+                        <input type="checkbox" id="remember" name="remember">
+                        Remember me
+                    </label>
+                </div>
 
                 <button type="submit">
-
                     Login as Admin
-
                     <span>→</span>
-
                 </button>
-
 
             </form>
 
 
 
             <p class="admin-note">
-
-                Admin accounts are created by
-                the platform administrator.
-
+                Admin accounts are created by the platform administrator.<br>
+                <small style="display: block; margin-top: 6px; color: #174c42; font-weight: 600;">
+                    Demo: admin@foodforgood.in &middot; Admin@123
+                </small>
             </p>
 
 
