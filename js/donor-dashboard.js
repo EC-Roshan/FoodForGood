@@ -22,6 +22,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const { user, donor } = donorData;
 
     // ═══════════════════════════════════════════════
+    //  CHECK PLATFORM SETTINGS (Verification gate)
+    // ═══════════════════════════════════════════════
+    const platformSettings = typeof FFGStore.getSettings === 'function' 
+        ? FFGStore.getSettings() 
+        : { default_expiry_hours: 6, allow_unverified_donors: true };
+
+    const isDonorRestricted = !platformSettings.allow_unverified_donors && user.status === 'pending';
+    if (isDonorRestricted) {
+        const addBtn = document.querySelector('.dash-nav-btn[data-section="add-listing"]');
+        if (addBtn) {
+            addBtn.style.opacity = '0.6';
+            addBtn.title = 'Account pending verification';
+        }
+        const overviewSec = document.getElementById('section-overview');
+        if (overviewSec) {
+            const banner = document.createElement('div');
+            banner.className = 'verification-banner banner-pending';
+            banner.innerHTML = '<span class="banner-icon">⏳</span><span>Your donor account is awaiting admin verification. Food listing creation is currently disabled until an admin verifies your details.</span>';
+            const welcomeEl = document.getElementById('dash-welcome');
+            if (welcomeEl && welcomeEl.nextSibling) {
+                overviewSec.insertBefore(banner, welcomeEl.nextSibling);
+            } else {
+                overviewSec.prepend(banner);
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════
     //  EXPIRE LISTINGS on load, then every 60s
     // ═══════════════════════════════════════════════
     FFGStore.expireListings();
@@ -151,6 +179,13 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         timeError.style.display = 'none';
         listingMsg.style.display = 'none';
+
+        if (isDonorRestricted) {
+            listingMsg.textContent = 'Account pending verification. You cannot post food listings until an admin verifies your account.';
+            listingMsg.className = 'form-message form-message--error';
+            listingMsg.style.display = 'block';
+            return;
+        }
 
         const now = new Date();
         const preparedAt = new Date(document.getElementById('prepared-at').value);
@@ -295,10 +330,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let actions = '';
         if (l.status === 'available') {
+            const isDemo = localStorage.getItem('ffg_demo_mode') === 'on';
             actions = `
                 <button class="btn-sm btn-primary action-btn" data-action="edit" data-id="${l.listing_id}">Edit</button>
                 <button class="btn-sm btn-danger action-btn" data-action="cancel" data-id="${l.listing_id}">Cancel</button>
-                <button class="btn-sm action-btn" data-action="simulate" data-id="${l.listing_id}" title="Demo only">\uD83E\uDD16 Simulate NGO Request</button>
+                ${isDemo ? `<button class="btn-sm action-btn" data-action="simulate" data-id="${l.listing_id}" title="Demo only">\uD83E\uDD16 Simulate NGO Request</button>` : ''}
             `;
         } else if (l.status === 'requested') {
             actions = `
@@ -564,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let ngoName = '\u2014';
             if (req) {
                 const ngo = FFGStore.getById('ffg_ngos', req.ngo_id);
-                if (ngo) ngoName = ngo.ngo_name;
+                if (ngo) ngoName = ngo.ngo_name + (ngo.city ? ` (${ngo.city})` : '');
             }
             return `<tr>
                 <td data-label="Date">${formatDate(l.created_at)}</td>
@@ -587,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let ngoName = '';
             if (req) {
                 const ngo = FFGStore.getById('ffg_ngos', req.ngo_id);
-                if (ngo) ngoName = ngo.ngo_name;
+                if (ngo) ngoName = ngo.ngo_name + (ngo.city ? ` (${ngo.city})` : '');
             }
             rows.push([formatDate(l.created_at), l.food_name, l.food_type, l.quantity, l.unit, ngoName, l.status]);
         });
@@ -620,6 +656,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const orgLabel = document.querySelector('label[for="p-org-name"]');
         if (orgField) orgField.style.display = isInd ? 'none' : '';
         if (orgLabel) orgLabel.style.display = isInd ? 'none' : '';
+
+        const demoToggle = document.getElementById('demo-mode-toggle');
+        if (demoToggle) {
+            demoToggle.checked = localStorage.getItem('ffg_demo_mode') === 'on';
+        }
+    }
+
+    const demoToggle = document.getElementById('demo-mode-toggle');
+    if (demoToggle) {
+        demoToggle.addEventListener('change', (e) => {
+            localStorage.setItem('ffg_demo_mode', e.target.checked ? 'on' : 'off');
+            if (typeof renderListings === 'function') renderListings();
+        });
     }
 
     document.getElementById('p-donor-type').addEventListener('change', (e) => {

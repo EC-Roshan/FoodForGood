@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof FFGStore !== 'undefined') {
     const session = FFGStore.getSession();
     if (session && session.role === 'admin') {
-      window.location.href = 'admin-dashboard.html';
+      window.location.href = 'admin-dashboard.html#overview';
       return;
     }
   }
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       FFGStore.setSession(user, remember);
-      window.location.href = 'admin-dashboard.html';
+      window.location.href = 'admin-dashboard.html#overview';
     });
   }
 

@@ -15,9 +15,9 @@
 
     <!-- TOP NAVBAR -->
     <header class="dash-navbar">
-        <div class="dash-logo">
+        <div class="dash-logo" aria-label="Food For Good">
             <span class="logo-mark">F</span>
-            Food For Good
+            <span class="dash-logo-text">Food For Good</span>
         </div>
         <div class="dash-user">
             <span class="dash-user-name" id="dash-user-name">Loading…</span>
@@ -209,6 +209,13 @@
                         <div id="cp-msg" class="form-message" style="display:none"></div>
                         <button type="submit">Change Password <span>→</span></button>
                     </form>
+                    <div style="margin-top:32px;padding-top:20px;border-top:1px dashed #dfe3da;">
+                        <p class="form-section">Testing &amp; Demo Settings</p>
+                        <label class="remember" style="font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer;">
+                            <input type="checkbox" id="demo-mode-toggle">
+                            <span>Enable Demo Mode (shows "Simulate NGO Request" button on listings)</span>
+                        </label>
+                    </div>
                 </div>
             </section>
 

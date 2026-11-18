@@ -1,116 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NGO Dashboard | Food For Good</title>
-
     <link rel="stylesheet" href="role-login.css">
     <link rel="stylesheet" href="dashboard.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
-          rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="js/store.js" defer></script>
     <script src="js/common.js" defer></script>
+    <script src="js/ngo-dashboard.js" defer></script>
 </head>
-
 <body class="dash-body">
 
     <!-- TOP NAVBAR -->
     <header class="dash-navbar">
-        <div class="dash-logo">
+        <div class="dash-logo" aria-label="Food For Good">
             <span class="logo-mark">F</span>
-            Food For Good
+            <span class="dash-logo-text">Food For Good</span>
         </div>
         <div class="dash-user">
-            <span class="dash-user-name" id="ngo-name-nav">Loading…</span>
-            <button class="dash-logout-btn" id="ngo-logout-btn">Logout</button>
+            <span class="dash-user-name" id="dash-user-name">Loading…</span>
+            <button class="dash-logout-btn" id="dash-logout-btn">Logout</button>
         </div>
     </header>
 
-    <main class="login-page" style="min-height: calc(100vh - 64px); padding: 50px 20px;">
+    <div class="dash-layout">
 
-        <div class="login-box signup-box" style="text-align: center; max-width: 600px;">
+        <!-- SIDEBAR -->
+        <nav class="dash-sidebar" id="dash-sidebar">
+            <button class="dash-nav-btn active" data-section="overview"><span class="dash-nav-icon">📊</span><span>Overview</span></button>
+            <button class="dash-nav-btn" data-section="browse"><span class="dash-nav-icon">🥦</span><span>Browse Food</span></button>
+            <button class="dash-nav-btn" data-section="requests"><span class="dash-nav-icon">📋</span><span>My Requests</span></button>
+            <button class="dash-nav-btn" data-section="distributions"><span class="dash-nav-icon">🌟</span><span>Distributions</span></button>
+            <button class="dash-nav-btn" data-section="profile"><span class="dash-nav-icon">👤</span><span>Profile</span></button>
+        </nav>
 
-            <div class="role-icon ngo-icon" style="margin: 0 auto 20px;">
-                🤝
+        <!-- MAIN CONTENT -->
+        <main class="dash-main">
+
+            <!-- Global Verification Banner -->
+            <div id="verification-banner-wrap"></div>
+
+            <!-- 1. OVERVIEW -->
+            <section id="section-overview" class="dash-section active">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
+                    <div>
+                        <h2 class="dash-section-title" style="margin-bottom:4px;">Overview</h2>
+                        <p class="dash-welcome" id="dash-welcome">Welcome back!</p>
+                    </div>
+                    <div>
+                        <span id="overview-status-badge" class="status-badge" style="padding:6px 14px;font-size:12px;">Loading…</span>
+                    </div>
+                </div>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📍</div>
+                        <div class="stat-value" id="stat-food-near">0</div>
+                        <div class="stat-label">Food Near You</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-value" id="stat-pending-req">0</div>
+                        <div class="stat-label">Pending Requests</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🚚</div>
+                        <div class="stat-value" id="stat-scheduled-pickups">0</div>
+                        <div class="stat-label">Pickups Scheduled</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🍲</div>
+                        <div class="stat-value" id="stat-people-served">0</div>
+                        <div class="stat-label">People Served</div>
+                    </div>
+                </div>
+
+                <!-- Expiring soon list -->
+                <h3 class="dash-sub-title" style="margin-top:28px;">Expiring Soon Near You (&lt; 3 hours)</h3>
+                <div id="expiring-soon-container" class="listings-grid">
+                    <p class="empty-state">No food expiring within 3 hours in your city.</p>
+                </div>
+
+                <!-- Recent activity -->
+                <h3 class="dash-sub-title" style="margin-top:28px;">Recent Activity</h3>
+                <div id="recent-activity" class="activity-list">
+                    <p class="empty-state">No recent activity found.</p>
+                </div>
+            </section>
+
+            <!-- 2. BROWSE FOOD -->
+            <section id="section-browse" class="dash-section" style="display:none">
+                <h2 class="dash-section-title">Browse Surplus Food</h2>
+                <p style="color:#64736d;font-size:14px;margin-top:-8px;margin-bottom:20px;">Discover available donations from verified food providers and request pickup.</p>
+
+                <!-- Filters -->
+                <div class="browse-filter-bar">
+                    <select id="browse-city" class="filter-select" aria-label="Filter by City">
+                        <option value="my_city">My City</option>
+                        <option value="all">All Cities</option>
+                    </select>
+
+                    <select id="browse-type" class="filter-select" aria-label="Filter by Food Type">
+                        <option value="all">All Types</option>
+                        <option value="veg">🥦 Veg</option>
+                        <option value="non-veg">🍗 Non-veg</option>
+                        <option value="mixed">🍱 Mixed</option>
+                    </select>
+
+                    <select id="browse-expiry" class="filter-select" aria-label="Filter by Expiry">
+                        <option value="all">Safe Time: Any</option>
+                        <option value="1">Expiring in 1 hour</option>
+                        <option value="3">Expiring in 3 hours</option>
+                        <option value="6">Expiring in 6 hours</option>
+                    </select>
+
+                    <select id="browse-sort" class="filter-select" aria-label="Sort By">
+                        <option value="expiring_soonest">Expiring Soonest</option>
+                        <option value="newest">Newest First</option>
+                        <option value="largest_qty">Largest Quantity</option>
+                    </select>
+
+                    <input type="search" class="search-box" id="browse-search" placeholder="Search by food or donor name…" style="flex:1;min-width:180px;">
+                </div>
+
+                <div id="browse-grid" class="listings-grid"></div>
+                <div id="browse-empty" class="empty-state" style="display:none">No food donations match your current filters.</div>
+            </section>
+
+            <!-- 3. MY REQUESTS -->
+            <section id="section-requests" class="dash-section" style="display:none">
+                <h2 class="dash-section-title">My Requests</h2>
+                <div class="filter-bar" style="margin-bottom:20px;">
+                    <div class="filter-chips" id="requests-filter-chips">
+                        <button class="chip active" data-tab="pending">Pending (<span id="count-pending">0</span>)</button>
+                        <button class="chip" data-tab="approved">Approved (<span id="count-approved">0</span>)</button>
+                        <button class="chip" data-tab="completed">Completed (<span id="count-completed">0</span>)</button>
+                        <button class="chip" data-tab="rejected">Rejected / Cancelled (<span id="count-rejected">0</span>)</button>
+                    </div>
+                </div>
+
+                <div id="requests-grid" class="requests-groups"></div>
+                <div id="requests-empty" class="empty-state" style="display:none">No requests found in this category.</div>
+            </section>
+
+            <!-- 4. DISTRIBUTIONS -->
+            <section id="section-distributions" class="dash-section" style="display:none">
+                <h2 class="dash-section-title">Distributions</h2>
+                <p style="color:#64736d;font-size:14px;margin-top:-8px;margin-bottom:20px;">Log the distribution of collected food to beneficiaries to track community impact.</p>
+
+                <!-- Pending distributions -->
+                <h3 class="dash-sub-title">Food Collected Awaiting Distribution Record</h3>
+                <div id="pending-dist-grid" class="listings-grid" style="margin-bottom:32px;"></div>
+                <div id="pending-dist-empty" class="empty-state" style="display:none;margin-bottom:32px;">All collected food donations have been recorded as distributed.</div>
+
+                <!-- Past distributions table -->
+                <div class="dash-section-header">
+                    <h3 class="dash-sub-title" style="margin-bottom:0">Past Distribution History</h3>
+                    <button class="export-btn" id="export-dist-csv-btn">⬇ Export CSV</button>
+                </div>
+                <div class="history-table-wrap">
+                    <table class="history-table" id="dist-table">
+                        <thead>
+                            <tr>
+                                <th>Distributed Date</th>
+                                <th>Food Name</th>
+                                <th>Quantity</th>
+                                <th>Donor</th>
+                                <th>Distribution Location</th>
+                                <th>People Served</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dist-tbody"></tbody>
+                    </table>
+                    <div id="dist-empty" class="empty-state" style="display:none">No completed distributions recorded yet.</div>
+                </div>
+            </section>
+
+            <!-- 5. PROFILE -->
+            <section id="section-profile" class="dash-section" style="display:none">
+                <h2 class="dash-section-title">Organization Profile</h2>
+                <div class="login-box signup-box" style="max-width:620px;margin:0">
+                    <form id="ngo-profile-form">
+                        <p class="form-section">Registration &amp; Verification</p>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label for="np-email">Email Address</label>
+                                <input type="email" id="np-email" readonly class="readonly-input">
+                            </div>
+                            <div class="form-col">
+                                <label for="np-reg-number">Registration Number</label>
+                                <input type="text" id="np-reg-number" readonly class="readonly-input">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label>Verification Status</label>
+                                <input type="text" id="np-vstatus" readonly class="readonly-input" style="font-weight:700;">
+                            </div>
+                            <div class="form-col">
+                                <label>Certificate on File</label>
+                                <input type="text" id="np-cert-file" readonly class="readonly-input">
+                            </div>
+                        </div>
+
+                        <p class="form-section">Organization Details</p>
+                        <label for="np-org-name">NGO / Organization Name <span class="req">*</span></label>
+                        <input type="text" id="np-org-name" name="ngo_name" required autocomplete="organization">
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label for="np-contact-name">Contact Person Name <span class="req">*</span></label>
+                                <input type="text" id="np-contact-name" name="contact_name" required autocomplete="name">
+                            </div>
+                            <div class="form-col">
+                                <label for="np-designation">Designation <span class="req">*</span></label>
+                                <input type="text" id="np-designation" name="designation" required>
+                            </div>
+                        </div>
+
+                        <label for="np-phone">Phone Number <span class="req">*</span></label>
+                        <input type="tel" id="np-phone" name="phone" required pattern="[6-9][0-9]{9}" maxlength="10" inputmode="numeric" title="Enter a 10-digit mobile number">
+
+                        <p class="form-section">Address</p>
+                        <label for="np-address">Address <span class="req">*</span></label>
+                        <textarea id="np-address" name="address" required rows="2" autocomplete="street-address"></textarea>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label for="np-city">City <span class="req">*</span></label>
+                                <input type="text" id="np-city" name="city" required autocomplete="address-level2">
+                            </div>
+                            <div class="form-col">
+                                <label for="np-pincode">Pincode <span class="req">*</span></label>
+                                <input type="text" id="np-pincode" name="pincode" required pattern="[0-9]{6}" maxlength="6" inputmode="numeric" title="Enter a 6-digit pincode">
+                            </div>
+                        </div>
+
+                        <p class="form-section">Operations</p>
+                        <label for="np-people-served">Approximate People Served Daily <span class="req">*</span></label>
+                        <input type="number" id="np-people-served" name="people_served" required min="1" step="1">
+
+                        <label>Pickup Capability <span class="req">*</span></label>
+                        <div class="pickup-options" style="margin-bottom:20px;">
+                            <label class="pickup-card">
+                                <input type="radio" name="pickup_capability" value="own_vehicle" id="np-cap-vehicle" required>
+                                <div class="pickup-content">
+                                    <span class="pickup-icon">🚐</span>
+                                    <span class="pickup-title">We have our own vehicle</span>
+                                    <span class="pickup-desc">Can collect directly from the donor</span>
+                                </div>
+                            </label>
+                            <label class="pickup-card">
+                                <input type="radio" name="pickup_capability" value="needs_delivery" id="np-cap-delivery">
+                                <div class="pickup-content">
+                                    <span class="pickup-icon">📦</span>
+                                    <span class="pickup-title">Need food delivered</span>
+                                    <span class="pickup-desc">Requires donor or volunteer drop-off</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div id="profile-msg" class="form-message" style="display:none"></div>
+                        <button type="submit" id="save-profile-btn">Save Profile <span>→</span></button>
+                    </form>
+
+                    <!-- Change Password Form -->
+                    <form id="ngo-pw-form" style="margin-top:32px;padding-top:24px;border-top:1px dashed #dfe3da;">
+                        <p class="form-section">Change Password</p>
+                        <label for="np-cp-current">Current Password <span class="req">*</span></label>
+                        <div class="pw-wrap">
+                            <input type="password" id="np-cp-current" placeholder="Current password" required minlength="8" autocomplete="current-password">
+                            <button type="button" class="pw-toggle" data-target="np-cp-current" aria-label="Toggle current password">👁</button>
+                        </div>
+
+                        <label for="np-cp-new">New Password <span class="req">*</span></label>
+                        <div class="pw-wrap">
+                            <input type="password" id="np-cp-new" placeholder="New password (min 8 chars, letter + number)" required minlength="8" autocomplete="new-password">
+                            <button type="button" class="pw-toggle" data-target="np-cp-new" aria-label="Toggle new password">👁</button>
+                        </div>
+
+                        <label for="np-cp-confirm">Confirm New Password <span class="req">*</span></label>
+                        <div class="pw-wrap">
+                            <input type="password" id="np-cp-confirm" placeholder="Re-enter new password" required minlength="8" autocomplete="new-password">
+                            <button type="button" class="pw-toggle" data-target="np-cp-confirm" aria-label="Toggle confirm password">👁</button>
+                        </div>
+
+                        <div id="pw-msg" class="form-message" style="display:none"></div>
+                        <button type="submit">Change Password <span>→</span></button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- CONFIRM MODAL -->
+    <div id="confirm-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <p class="modal-msg" id="modal-msg">Are you sure?</p>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" id="modal-cancel">Cancel</button>
+                <button type="button" class="modal-confirm" id="modal-confirm">Confirm</button>
             </div>
-
-            <span class="role-label">
-                FOOD RECEIVING ORGANIZATION
-            </span>
-
-            <h1 id="ngo-welcome" style="margin: 12px 0 16px;">
-                Welcome, NGO
-            </h1>
-
-            <!-- Verification Status Badge -->
-            <div style="margin-bottom: 24px;">
-                <span id="ngo-status-badge" class="status-badge" style="padding: 6px 16px; font-size: 13px;">
-                    Verification Status: Loading…
-                </span>
-            </div>
-
-            <!-- Coming Soon Card -->
-            <div style="background: #f8f6ef; border: 1px dashed #dfe3da; border-radius: 18px; padding: 32px 24px; margin-bottom: 24px;">
-                <div style="font-size: 36px; margin-bottom: 12px;">🚧</div>
-                <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; color: #174c42; margin-bottom: 8px;">
-                    NGO Dashboard Coming Soon
-                </h2>
-                <p style="color: #64736d; font-size: 14px; line-height: 1.6; max-width: 440px; margin: 0 auto;">
-                    We are building tools for NGOs to discover real-time surplus food donations, send instant pickup requests, and coordinate volunteer collection.
-                </p>
-            </div>
-
-            <button type="button" id="ngo-page-logout-btn" style="width: auto; padding: 12px 28px; display: inline-block;">
-                Logout
-            </button>
-
         </div>
+    </div>
 
-    </main>
+    <!-- REQUEST FOOD MODAL -->
+    <div id="request-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true">
+        <div class="modal-box" style="max-width:520px;">
+            <h3 class="modal-title" id="req-modal-title">Request Surplus Food</h3>
+            <p id="req-modal-subtitle" style="color:#64736d;font-size:13px;margin-top:-6px;margin-bottom:16px;">Specify how much food your team can collect.</p>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Guard: role must be 'ngo'
-            const session = FFGStore.getSession();
-            if (!session || session.role !== 'ngo') {
-                window.location.href = 'ngo-login.html';
-                return;
-            }
+            <form id="request-food-form">
+                <input type="hidden" id="req-listing-id">
 
-            const user = FFGStore.getById('ffg_users', session.user_id);
-            const ngo = FFGStore.findBy('ffg_ngos', 'user_id', session.user_id);
+                <div style="background:#f8f6ef;border:1px solid #dfe3da;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;">
+                    <div><strong>Food:</strong> <span id="req-food-name">—</span></div>
+                    <div style="margin-top:4px;"><strong>Available Quantity:</strong> <span id="req-max-qty">—</span></div>
+                    <div style="margin-top:4px;"><strong>Donor:</strong> <span id="req-donor-info">—</span></div>
+                </div>
 
-            const ngoName = ngo ? ngo.ngo_name : (user ? user.full_name : 'NGO Partner');
-            const vStatus = ngo ? (ngo.verification_status || 'pending') : (user && user.status === 'active' ? 'verified' : 'pending');
+                <label for="req-qty">Quantity Needed <span class="req">*</span></label>
+                <input type="number" id="req-qty" required min="0.5" step="0.5" style="width:100%;padding:12px;border:1px solid #dfe3da;border-radius:10px;margin-bottom:14px;font-family:'DM Sans',sans-serif">
 
-            document.getElementById('ngo-name-nav').textContent = ngoName;
-            document.getElementById('ngo-welcome').textContent = `Welcome, ${ngoName}!`;
+                <label for="req-message">Message to Donor <span class="optional">(optional, max 200 chars)</span></label>
+                <textarea id="req-message" rows="3" maxlength="200" placeholder="e.g. We have an insulated van ready to pick up within 45 minutes." style="width:100%;padding:12px;border:1px solid #dfe3da;border-radius:10px;font-family:'DM Sans',sans-serif;margin-bottom:6px;"></textarea>
+                <div class="char-counter"><span id="req-char-count">0</span> / 200</div>
 
-            const badge = document.getElementById('ngo-status-badge');
-            if (vStatus === 'verified') {
-                badge.textContent = '✓ Verified Organization';
-                badge.style.background = '#dcf5e4';
-                badge.style.color = '#174c42';
-            } else if (vStatus === 'rejected') {
-                badge.textContent = '✕ Verification Rejected';
-                badge.style.background = '#fce8e8';
-                badge.style.color = '#c0392b';
-            } else {
-                badge.textContent = '⏳ Verification Pending Admin Review';
-                badge.style.background = '#fff3cd';
-                badge.style.color = '#856404';
-            }
+                <div id="req-error" class="form-error" style="display:none;margin-bottom:12px;"></div>
 
-            document.getElementById('ngo-logout-btn').addEventListener('click', () => FFGStore.logout());
-            document.getElementById('ngo-page-logout-btn').addEventListener('click', () => FFGStore.logout());
-        });
-    </script>
+                <div class="modal-actions">
+                    <button type="button" class="modal-cancel" id="req-cancel-btn">Cancel</button>
+                    <button type="submit" class="modal-confirm" id="req-submit-btn">Send Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCHEDULE PICKUP MODAL -->
+    <div id="schedule-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true">
+        <div class="modal-box" style="max-width:500px;">
+            <h3 class="modal-title">Schedule Pickup</h3>
+            <p id="sm-modal-subtitle" style="color:#64736d;font-size:13px;margin-top:-6px;margin-bottom:16px;">Set an estimated pickup time before safe consumption expires.</p>
+
+            <form id="schedule-form">
+                <input type="hidden" id="sm-request-id">
+
+                <div style="background:#f8f6ef;border:1px solid #dfe3da;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;">
+                    <div><strong>Food:</strong> <span id="sm-food-name">—</span></div>
+                    <div style="margin-top:4px;"><strong>Pickup Address:</strong> <span id="sm-address">—</span></div>
+                    <div style="margin-top:4px;"><strong>Safe Until:</strong> <span id="sm-safe-until" style="color:#c0392b;font-weight:700;">—</span></div>
+                </div>
+
+                <label for="sm-pickup-time">Estimated Pickup Time <span class="req">*</span></label>
+                <input type="datetime-local" id="sm-pickup-time" required style="width:100%;padding:12px;border:1px solid #dfe3da;border-radius:10px;margin-bottom:14px;font-family:'DM Sans',sans-serif">
+
+                <label for="sm-pickup-person">Pickup Person / Driver Name <span class="req">*</span></label>
+                <input type="text" id="sm-pickup-person" required placeholder="Name of your volunteer or driver" style="width:100%;padding:12px;border:1px solid #dfe3da;border-radius:10px;margin-bottom:14px;font-family:'DM Sans',sans-serif">
+
+                <div id="sm-error" class="form-error" style="display:none;margin-bottom:12px;"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-cancel" id="sm-cancel-btn">Cancel</button>
+                    <button type="submit" class="modal-confirm" id="sm-submit-btn">Save Schedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- RECORD DISTRIBUTION MODAL -->
+    <div id="distribution-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true">
+        <div class="modal-box" style="max-width:520px;">
+            <h3 class="modal-title">Record Food Distribution</h3>
+            <p style="color:#64736d;font-size:13px;margin-top:-6px;margin-bottom:16px;">Document where and how many individuals were served with this donation.</p>
+
+            <form id="distribution-form">
+                <input type="hidden" id="dm-handover-id">
+                <input type="hidden" id="dm-listing-id">
+
+                <div style="background:#f8f6ef;border:1px solid #dfe3da;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;">
+                    <div><strong>Food:</strong> <span id="dm-food-name">—</span></div>
+                    <div style="margin-top:4px;"><strong>Quantity:</strong> <span id="dm-quantity">—</span></div>
+                    <div style="margin-top:4px;"><strong>Collected At:</strong> <span id="dm-collected-at">—</span></div>
+                </div>
+
+                <label for="dm-distributed-at">Distribution Date &amp; Time <span class="req">*</span></label>
+                <input type="datetime-local" id="dm-distributed-at" required style="width:100%;padding:12px;border:1px solid #dfe3da;border-radius:10px;margin-bottom:14px;font-family:'DM Sans',sans-serif">
+
+                <label for="dm-location">Distribution Location / Community Center <span class="req">*</span></label>
+                <input type="text" id="dm-location" required placeholder="e.g. Slum Cluster Near Sector 62, Night Shelter" style="width:100%;padding:12px;border:1px solid #dfe3da;border-radius:10px;margin-bottom:14px;font-family:'DM Sans',sans-serif">
+
+                <label for="dm-people-served">Number of People Served <span class="req">*</span></label>
+                <input type="number" id="dm-people-served" required min="1" step="1" placeholder="e.g. 50" style="width:100%;padding:12px;border:1px solid #dfe3da;border-radius:10px;margin-bottom:14px;font-family:'DM Sans',sans-serif">
+
+                <label for="dm-remarks">Remarks / Feedback <span class="optional">(optional)</span></label>
+                <textarea id="dm-remarks" rows="2" placeholder="e.g. Distributed hot to children and elderly residents." style="width:100%;padding:12px;border:1px solid #dfe3da;border-radius:10px;font-family:'DM Sans',sans-serif;margin-bottom:14px;"></textarea>
+
+                <div id="dm-error" class="form-error" style="display:none;margin-bottom:12px;"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-cancel" id="dm-cancel-btn">Cancel</button>
+                    <button type="submit" class="modal-confirm" id="dm-submit-btn">Save Distribution</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 </body>
-
 </html>
-

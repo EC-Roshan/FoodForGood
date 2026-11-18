@@ -118,7 +118,7 @@
           navLogin.textContent = 'Dashboard →';
           navLogin.href = dashboardUrl;
 
-          // Add a logout button if not already present in the navbar
+          // Add desktop logout button if not already present
           const navbar = navLogin.closest('.navbar');
           if (navbar && !navbar.querySelector('.nav-logout')) {
             const logoutLink = document.createElement('a');
@@ -135,6 +135,20 @@
               FFGStore.logout();
             });
             navLogin.parentNode.insertBefore(logoutLink, navLogin.nextSibling);
+          }
+
+          // Move logout inside hamburger dropdown menu on screens < 900px
+          const navLinks = navbar ? navbar.querySelector('.nav-links') : null;
+          if (navLinks && !navLinks.querySelector('.nav-logout-mobile')) {
+            const mobileLogout = document.createElement('a');
+            mobileLogout.href = '#';
+            mobileLogout.className = 'nav-logout-mobile';
+            mobileLogout.textContent = 'Logout';
+            mobileLogout.addEventListener('click', (e) => {
+              e.preventDefault();
+              FFGStore.logout();
+            });
+            navLinks.appendChild(mobileLogout);
           }
         }
       }

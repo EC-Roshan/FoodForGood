@@ -8,125 +8,762 @@
 
     <link rel="stylesheet" href="role-login.css">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="admin.css">
 
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
           rel="stylesheet">
 
     <script src="js/store.js" defer></script>
     <script src="js/common.js" defer></script>
+    <script src="js/admin-dashboard.js" defer></script>
 </head>
 
 <body class="dash-body">
 
     <!-- TOP NAVBAR -->
     <header class="dash-navbar">
-        <div class="dash-logo">
-            <span class="logo-mark">F</span>
-            Food For Good
+        <div class="nav-left-group">
+            <button type="button" class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Toggle navigation menu">
+                ☰
+            </button>
+            <div class="dash-logo" aria-label="Food For Good">
+                <span class="logo-mark">F</span>
+                <span class="dash-logo-text">Food For Good</span>
+            </div>
         </div>
         <div class="dash-user">
-            <span class="dash-user-name">System Administrator</span>
-            <button class="dash-logout-btn" id="admin-logout-btn">Logout</button>
+            <span class="dash-user-name" id="dash-user-name">Administrator</span>
+            <button type="button" class="dash-logout-btn" id="dash-logout-btn">Logout</button>
         </div>
     </header>
 
-    <main class="login-page" style="min-height: calc(100vh - 64px); padding: 40px 20px;">
+    <!-- MOBILE SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-        <div style="max-width: 900px; width: 100%; margin: 0 auto;">
+    <div class="dash-layout">
 
-            <!-- Header -->
-            <div style="text-align: center; margin-bottom: 35px;">
-                <div class="role-icon admin-icon" style="margin: 0 auto 16px;">
-                    🛡️
+        <!-- ADMIN SIDEBAR -->
+        <nav class="dash-sidebar admin-sidebar" id="dash-sidebar" aria-label="Admin Navigation">
+            <button type="button" class="dash-nav-btn active" data-section="overview">
+                <span class="dash-nav-icon">📊</span>
+                <span>Overview</span>
+            </button>
+            <button type="button" class="dash-nav-btn" data-section="verifications">
+                <span class="dash-nav-icon">✅</span>
+                <span>Verifications</span>
+                <span class="verif-badge" id="verif-badge" data-count="0"></span>
+            </button>
+            <button type="button" class="dash-nav-btn" data-section="users">
+                <span class="dash-nav-icon">👥</span>
+                <span>Users</span>
+            </button>
+            <button type="button" class="dash-nav-btn" data-section="listings">
+                <span class="dash-nav-icon">🍱</span>
+                <span>Listings</span>
+            </button>
+            <button type="button" class="dash-nav-btn" data-section="requests">
+                <span class="dash-nav-icon">📋</span>
+                <span>Requests & Pickups</span>
+            </button>
+            <button type="button" class="dash-nav-btn" data-section="distributions">
+                <span class="dash-nav-icon">🌟</span>
+                <span>Distributions</span>
+            </button>
+            <button type="button" class="dash-nav-btn" data-section="reports">
+                <span class="dash-nav-icon">📈</span>
+                <span>Reports</span>
+            </button>
+            <button type="button" class="dash-nav-btn" data-section="activity-log">
+                <span class="dash-nav-icon">📜</span>
+                <span>Activity Log</span>
+            </button>
+            <button type="button" class="dash-nav-btn" data-section="settings">
+                <span class="dash-nav-icon">⚙️</span>
+                <span>Settings</span>
+            </button>
+        </nav>
+
+        <!-- MAIN WORKSPACE CONTENT -->
+        <main class="dash-main" id="dash-main-content">
+
+            <!-- 1. OVERVIEW SECTION -->
+            <section id="section-overview" class="dash-section active">
+                <h2 class="dash-section-title">Platform Overview</h2>
+                <p class="dash-welcome" id="admin-welcome">Welcome to the central platform administration dashboard.</p>
+
+                <!-- 6 Stat Cards -->
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🍱</div>
+                        <div class="stat-value" id="astat-donors">0</div>
+                        <div class="stat-label">Registered Donors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-value" id="astat-ngos">0</div>
+                        <div class="stat-label">Partner NGOs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-value" id="astat-verif" style="color: #f28b55;">0</div>
+                        <div class="stat-label">Pending Verifications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-value" id="astat-active">0</div>
+                        <div class="stat-label">Active Listings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🚀</div>
+                        <div class="stat-value" id="astat-rescued">0</div>
+                        <div class="stat-label">Food Rescued</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value" id="astat-people">0</div>
+                        <div class="stat-label">People Served</div>
+                    </div>
                 </div>
-                <span class="role-label">
-                    PLATFORM MANAGEMENT
-                </span>
-                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 36px; margin: 8px 0 6px; color: #172321;">
-                    Welcome, Admin
-                </h1>
-                <p style="color: #64736d; font-size: 15px;">
-                    Platform statistics and management overview
-                </p>
-            </div>
 
-            <!-- 4 Read-only Stat Cards -->
-            <div class="stat-grid" style="margin-bottom: 30px;">
+                <!-- 3 Canvas Charts -->
+                <div class="admin-charts-row">
+                    <!-- Line Chart: Listings Created vs Distributions -->
+                    <div class="admin-chart-box">
+                        <div class="admin-chart-header">
+                            <h3 class="admin-chart-title">Activity Trend (Last 14 Days)</h3>
+                        </div>
+                        <div class="admin-chart-canvas-wrap">
+                            <canvas id="chart-line" width="450" height="230"></canvas>
+                        </div>
+                        <div class="chart-legend" id="chart-line-legend">
+                            <div class="chart-legend-item">
+                                <span class="chart-legend-dot" style="background: #174c42;"></span>
+                                <span>Listings Created</span>
+                            </div>
+                            <div class="chart-legend-item">
+                                <span class="chart-legend-dot" style="background: #c7e86b;"></span>
+                                <span>Distributions Completed</span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">🍱</div>
-                    <div class="stat-value" id="stat-donors">0</div>
-                    <div class="stat-label">Registered Donors</div>
+                    <!-- Donut Chart: Listings by Status -->
+                    <div class="admin-chart-box">
+                        <div class="admin-chart-header">
+                            <h3 class="admin-chart-title">Listings by Status</h3>
+                        </div>
+                        <div class="admin-chart-canvas-wrap">
+                            <canvas id="chart-donut" width="350" height="230"></canvas>
+                        </div>
+                        <div class="chart-legend" id="chart-donut-legend"></div>
+                    </div>
+
+                    <!-- Bar Chart: Top Cities -->
+                    <div class="admin-chart-box">
+                        <div class="admin-chart-header">
+                            <h3 class="admin-chart-title">Top Active Cities</h3>
+                        </div>
+                        <div class="admin-chart-canvas-wrap">
+                            <canvas id="chart-bar" width="380" height="230"></canvas>
+                        </div>
+                        <div class="chart-legend" id="chart-bar-legend">
+                            <div class="chart-legend-item">
+                                <span class="chart-legend-dot" style="background: #174c42;"></span>
+                                <span>Total Volume / Count</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">⏳</div>
-                    <div class="stat-value" id="stat-pending-ngos" style="color: #f28b55;">0</div>
-                    <div class="stat-label">NGOs Pending Verification</div>
+                <!-- Needs Attention Section -->
+                <h3 class="dash-sub-title">Needs Attention</h3>
+                <div class="attention-list" id="needs-attention-list"></div>
+
+                <!-- Recent Activity Feed -->
+                <h3 class="dash-sub-title" style="margin-top: 24px;">Recent System Events</h3>
+                <div class="activity-list" id="overview-activity-list"></div>
+            </section>
+
+            <!-- 2. VERIFICATIONS SECTION -->
+            <section id="section-verifications" class="dash-section" style="display: none;">
+                <div class="dash-section-header">
+                    <div>
+                        <h2 class="dash-section-title">Organization Verifications</h2>
+                        <p class="dash-welcome" style="margin-bottom: 0;">Review identity proofs, certificates, and compliance records.</p>
+                    </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">📦</div>
-                    <div class="stat-value" id="stat-active-listings">0</div>
-                    <div class="stat-label">Active Listings</div>
+                <!-- Tabs & Filters -->
+                <div class="filter-bar">
+                    <div class="filter-chips">
+                        <button type="button" class="chip active" data-verif-tab="ngo-pending">Pending NGOs</button>
+                        <button type="button" class="chip" data-verif-tab="donor-pending">Pending Donors</button>
+                        <button type="button" class="chip" data-verif-tab="reviewed">Reviewed Records</button>
+                    </div>
+                    <input type="text" id="verif-search" class="search-box" placeholder="Search by name, email, or city…">
+                    <select id="verif-city-filter" class="filter-select">
+                        <option value="all">All Cities</option>
+                    </select>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">🌟</div>
-                    <div class="stat-value" id="stat-distributions">0</div>
-                    <div class="stat-label">Distributions Tracked</div>
+                <!-- Verification Cards Container -->
+                <div class="verif-cards-grid" id="verif-cards-container"></div>
+                <div class="empty-state" id="verif-empty" style="display: none;">
+                    No pending verification requests found matching your filter criteria.
+                </div>
+            </section>
+
+            <!-- 3. USERS MANAGEMENT SECTION -->
+            <section id="section-users" class="dash-section" style="display: none;">
+                <div class="dash-section-header">
+                    <div>
+                        <h2 class="dash-section-title">User Management</h2>
+                        <p class="dash-welcome" style="margin-bottom: 0;">View, filter, manage account states, and provision administrators.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="btn-sm btn-primary" id="users-add-admin-btn">＋ Add Admin</button>
+                        <button type="button" class="export-btn" id="users-export-btn">Export CSV</button>
+                    </div>
                 </div>
 
-            </div>
+                <!-- User Filters -->
+                <div class="filter-bar">
+                    <select id="users-role-filter" class="filter-select">
+                        <option value="all">All Roles</option>
+                        <option value="donor">Donor</option>
+                        <option value="ngo">NGO</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <select id="users-status-filter" class="filter-select">
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="blocked">Blocked</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <select id="users-city-filter" class="filter-select">
+                        <option value="all">All Cities</option>
+                    </select>
+                    <input type="text" id="users-search" class="search-box" placeholder="Search by name, email, phone…">
+                </div>
 
-            <!-- Coming Soon Card -->
-            <div style="background: #ffffff; border: 1px dashed #dfe3da; border-radius: 22px; padding: 36px 28px; text-align: center; box-shadow: 0 10px 30px rgba(23, 76, 66, 0.05);">
-                <div style="font-size: 38px; margin-bottom: 12px;">📊</div>
-                <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; color: #174c42; margin-bottom: 8px;">
-                    Full Admin Panel Coming Soon
-                </h2>
-                <p style="color: #64736d; font-size: 14px; line-height: 1.7; max-width: 520px; margin: 0 auto 24px;">
-                    The full administration module will allow approving and verifying NGO documentation, managing user roles, monitoring donation safety, and exporting platform-wide impact audits.
-                </p>
-                <button type="button" id="admin-page-logout" class="dash-logout-btn" style="padding: 12px 28px; font-size: 14px;">
-                    Logout
-                </button>
-            </div>
+                <!-- Users Table -->
+                <div class="history-table-wrap">
+                    <table class="history-table" id="users-table">
+                        <caption class="sr-only">Platform User Accounts Directory</caption>
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="name">Full Name</th>
+                                <th class="sortable" data-sort="email">Email</th>
+                                <th class="sortable" data-sort="role">Role</th>
+                                <th class="sortable" data-sort="status">Status</th>
+                                <th>City</th>
+                                <th class="sortable" data-sort="joined">Registered</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody"></tbody>
+                    </table>
+                </div>
 
+                <div class="pagination" id="users-pagination"></div>
+            </section>
+
+            <!-- 4. LISTINGS SECTION -->
+            <section id="section-listings" class="dash-section" style="display: none;">
+                <div class="dash-section-header">
+                    <div>
+                        <h2 class="dash-section-title">Food Listings Directory</h2>
+                        <p class="dash-welcome" style="margin-bottom: 0;">Audit active surplus food postings, safety expiries, and cancellation states.</p>
+                    </div>
+                    <button type="button" class="export-btn" id="listings-export-btn">Export CSV</button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-bar">
+                    <select id="listings-status-filter" class="filter-select">
+                        <option value="all">All Statuses</option>
+                        <option value="available">Available</option>
+                        <option value="requested">Requested</option>
+                        <option value="approved">Approved</option>
+                        <option value="collected">Collected</option>
+                        <option value="distributed">Distributed</option>
+                        <option value="expired">Expired</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <select id="listings-type-filter" class="filter-select">
+                        <option value="all">All Food Types</option>
+                        <option value="veg">Vegetarian</option>
+                        <option value="non-veg">Non-Vegetarian</option>
+                    </select>
+                    <select id="listings-city-filter" class="filter-select">
+                        <option value="all">All Cities</option>
+                    </select>
+                    <input type="date" id="listings-date-from" class="filter-select" aria-label="From Date">
+                    <input type="date" id="listings-date-to" class="filter-select" aria-label="To Date">
+                    <input type="text" id="listings-search" class="search-box" placeholder="Search food, notes, or donor…">
+                </div>
+
+                <!-- Listings Table -->
+                <div class="history-table-wrap">
+                    <table class="history-table" id="listings-table">
+                        <caption class="sr-only">Platform Surplus Food Listings</caption>
+                        <thead>
+                            <tr>
+                                <th>Food Item</th>
+                                <th>Donor Organization</th>
+                                <th>Type</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Posted At</th>
+                                <th>Expires At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listings-tbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="listings-pagination"></div>
+            </section>
+
+            <!-- 5. REQUESTS & PICKUPS SECTION -->
+            <section id="section-requests" class="dash-section" style="display: none;">
+                <div class="dash-section-header">
+                    <div>
+                        <h2 class="dash-section-title">Requests & Pickup Monitoring</h2>
+                        <p class="dash-welcome" style="margin-bottom: 0;">Track real-time requests, NGO logistics handovers, and flag overdue pickups.</p>
+                    </div>
+                    <button type="button" class="export-btn" id="req-export-btn">Export CSV</button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-bar">
+                    <select id="req-status-filter" class="filter-select">
+                        <option value="all">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <input type="date" id="req-date-from" class="filter-select" aria-label="From Date">
+                    <input type="date" id="req-date-to" class="filter-select" aria-label="To Date">
+                    <input type="text" id="req-search" class="search-box" placeholder="Search food, NGO, or message…">
+                </div>
+
+                <!-- Requests Table -->
+                <div class="history-table-wrap">
+                    <table class="history-table" id="req-table">
+                        <caption class="sr-only">Platform Food Requests and Handover Schedules</caption>
+                        <thead>
+                            <tr>
+                                <th>Food Item</th>
+                                <th>Requesting NGO</th>
+                                <th>Requested Qty</th>
+                                <th>Status</th>
+                                <th>Requested At</th>
+                                <th>Pickup Info</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="req-tbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="req-pagination"></div>
+            </section>
+
+            <!-- 6. DISTRIBUTIONS SECTION -->
+            <section id="section-distributions" class="dash-section" style="display: none;">
+                <div class="dash-section-header">
+                    <div>
+                        <h2 class="dash-section-title">Distribution Audits</h2>
+                        <p class="dash-welcome" style="margin-bottom: 0;">Track verified food meals handed over to beneficiary communities.</p>
+                    </div>
+                    <button type="button" class="export-btn" id="dist-export-btn">Export CSV</button>
+                </div>
+
+                <!-- 3 Summary Stat Cards -->
+                <div class="stat-grid" style="margin-bottom: 24px;">
+                    <div class="stat-card">
+                        <div class="stat-icon">🌟</div>
+                        <div class="stat-value" id="dist-total">0</div>
+                        <div class="stat-label">Total Distribution Drives</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value" id="dist-people">0</div>
+                        <div class="stat-label">Total People Fed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="dist-avg">0</div>
+                        <div class="stat-label">Avg People Per Drive</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-bar">
+                    <select id="dist-ngo-filter" class="filter-select">
+                        <option value="all">All Partner NGOs</option>
+                    </select>
+                    <input type="date" id="dist-date-from" class="filter-select" aria-label="From Date">
+                    <input type="date" id="dist-date-to" class="filter-select" aria-label="To Date">
+                </div>
+
+                <!-- Distributions Table -->
+                <div class="history-table-wrap">
+                    <table class="history-table" id="dist-table">
+                        <caption class="sr-only">Community Food Distribution Logs</caption>
+                        <thead>
+                            <tr>
+                                <th>Food Item</th>
+                                <th>Distributing NGO</th>
+                                <th>Distributed At</th>
+                                <th>Location / Shelter</th>
+                                <th>People Served</th>
+                                <th>Audit Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dist-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 7. REPORTS & AUDITS SECTION -->
+            <section id="section-reports" class="dash-section" style="display: none;">
+                <div class="dash-section-header">
+                    <div>
+                        <h2 class="dash-section-title">Platform Impact & Audit Reports</h2>
+                        <p class="dash-welcome" style="margin-bottom: 0;">Filter aggregated statistics across timeframes, review leaderboards, and print summary audits.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="export-btn" id="rpt-export-btn">Export Summary CSV</button>
+                        <button type="button" class="btn-sm btn-primary" id="rpt-print-btn">🖨 Print Report</button>
+                    </div>
+                </div>
+
+                <!-- Range Presets & Filter Bar -->
+                <div class="filter-bar">
+                    <select id="report-range-select" class="filter-select">
+                        <option value="7">Last 7 Days</option>
+                        <option value="14" selected>Last 14 Days</option>
+                        <option value="30">Last 30 Days</option>
+                        <option value="all">All Time</option>
+                        <option value="custom">Custom Date Range</option>
+                    </select>
+                    <input type="date" id="report-date-from" class="filter-select" style="display: none;" aria-label="From Date">
+                    <input type="date" id="report-date-to" class="filter-select" style="display: none;" aria-label="To Date">
+                    <button type="button" class="btn-sm btn-primary" id="report-apply-btn">Apply Range</button>
+                </div>
+
+                <!-- 4 Report Summary Stat Cards -->
+                <div class="stat-grid" style="margin-bottom: 28px;">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-value" id="rpt-listings">0</div>
+                        <div class="stat-label">Listings Posted</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🚚</div>
+                        <div class="stat-value" id="rpt-collected">0</div>
+                        <div class="stat-label">Donations Collected</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌟</div>
+                        <div class="stat-value" id="rpt-distributed">0</div>
+                        <div class="stat-label">Distributions Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-value" id="rpt-people">0</div>
+                        <div class="stat-label">People Nourished</div>
+                    </div>
+                </div>
+
+                <!-- Report Chart -->
+                <div class="admin-chart-box" style="margin-bottom: 32px;">
+                    <div class="admin-chart-header">
+                        <h3 class="admin-chart-title">Status Breakdown for Selected Period</h3>
+                    </div>
+                    <div class="admin-chart-canvas-wrap">
+                        <canvas id="rpt-chart" width="600" height="240"></canvas>
+                    </div>
+                </div>
+
+                <!-- Leaderboards: Top 5 Donors & NGOs -->
+                <div class="leaderboards-row">
+                    <div class="leaderboard-card">
+                        <h3 class="leaderboard-title">🍱 Top 5 Food Donors</h3>
+                        <div class="leaderboard-list" id="rpt-top-donors"></div>
+                    </div>
+                    <div class="leaderboard-card">
+                        <h3 class="leaderboard-title">🏢 Top 5 Distributing NGOs</h3>
+                        <div class="leaderboard-list" id="rpt-top-ngos"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. ACTIVITY LOG SECTION -->
+            <section id="section-activity-log" class="dash-section" style="display: none;">
+                <div class="dash-section-header">
+                    <div>
+                        <h2 class="dash-section-title">Platform Activity Log</h2>
+                        <p class="dash-welcome" style="margin-bottom: 0;">Comprehensive audit trails tracking every administrative approval, role switch, and config change.</p>
+                    </div>
+                    <button type="button" class="export-btn" id="log-export-btn">Export Log CSV</button>
+                </div>
+
+                <!-- Log Filters -->
+                <div class="filter-bar">
+                    <select id="log-action-filter" class="filter-select">
+                        <option value="all">All Actions</option>
+                        <option value="VERIFIED_NGO">VERIFIED_NGO</option>
+                        <option value="REJECTED_NGO">REJECTED_NGO</option>
+                        <option value="VERIFIED_DONOR">VERIFIED_DONOR</option>
+                        <option value="BLOCKED_USER">BLOCKED_USER</option>
+                        <option value="UNBLOCKED_USER">UNBLOCKED_USER</option>
+                        <option value="RESET_PASSWORD">RESET_PASSWORD</option>
+                        <option value="CREATED_ADMIN">CREATED_ADMIN</option>
+                        <option value="EXPIRED_LISTING">EXPIRED_LISTING</option>
+                        <option value="CANCELLED_LISTING">CANCELLED_LISTING</option>
+                        <option value="SETTINGS_UPDATE">SETTINGS_UPDATE</option>
+                    </select>
+                    <input type="date" id="log-date-from" class="filter-select" aria-label="From Date">
+                    <input type="date" id="log-date-to" class="filter-select" aria-label="To Date">
+                    <input type="text" id="log-search" class="search-box" placeholder="Search by actor, target, or details…">
+                </div>
+
+                <!-- Activity Log Table -->
+                <div class="history-table-wrap">
+                    <table class="history-table" id="log-table">
+                        <caption class="sr-only">Platform Audit and Administrative Activity Trail</caption>
+                        <thead>
+                            <tr>
+                                <th>Administrator / Actor</th>
+                                <th>Action Taken</th>
+                                <th>Target Entity</th>
+                                <th>Audit Details</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-tbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="log-pagination"></div>
+            </section>
+
+            <!-- 9. SETTINGS SECTION -->
+            <section id="section-settings" class="dash-section" style="display: none;">
+                <h2 class="dash-section-title">Platform & Admin Settings</h2>
+                <p class="dash-welcome">Manage administrative credentials, platform parameters, and prototype reset controls.</p>
+
+                <div class="settings-grid">
+                    <!-- Left Column: Profile & Password -->
+                    <div>
+                        <!-- Profile Card -->
+                        <div class="settings-card">
+                            <h3>Admin Profile</h3>
+                            <form id="settings-profile-form" novalidate>
+                                <div class="settings-field">
+                                    <label for="set-name">Full Name</label>
+                                    <input type="text" id="set-name" required>
+                                </div>
+                                <div class="settings-field">
+                                    <label for="set-email">Email Address (Read-only)</label>
+                                    <input type="email" id="set-email" class="readonly-input" readonly>
+                                </div>
+                                <div class="settings-field">
+                                    <label for="set-phone">Phone Number</label>
+                                    <input type="tel" id="set-phone">
+                                </div>
+                                <button type="submit" class="dash-logout-btn" style="width: 100%; padding: 12px; font-size: 14px;">Save Profile</button>
+                            </form>
+                        </div>
+
+                        <!-- Change Password Card -->
+                        <div class="settings-card">
+                            <h3>Change Password</h3>
+                            <form id="settings-pw-form" novalidate>
+                                <div class="settings-field">
+                                    <label for="set-cp-current">Current Password</label>
+                                    <div class="pw-wrap">
+                                        <input type="password" id="set-cp-current" data-toggle required>
+                                    </div>
+                                </div>
+                                <div class="settings-field">
+                                    <label for="set-cp-new">New Password (Min 8 Characters)</label>
+                                    <div class="pw-wrap">
+                                        <input type="password" id="set-cp-new" minlength="8" data-toggle required>
+                                    </div>
+                                </div>
+                                <div class="settings-field">
+                                    <label for="set-cp-confirm">Confirm New Password</label>
+                                    <div class="pw-wrap">
+                                        <input type="password" id="set-cp-confirm" data-toggle required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="dash-logout-btn" style="width: 100%; padding: 12px; font-size: 14px;">Update Password</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Platform Policies & Prototype Danger Zone -->
+                    <div>
+                        <!-- Platform Settings Card -->
+                        <div class="settings-card">
+                            <h3>Food Platform Parameters</h3>
+                            <form id="settings-platform-form" novalidate>
+                                <div class="settings-field">
+                                    <label for="set-expiry-hours">Default Expiry Threshold (Hours)</label>
+                                    <input type="number" id="set-expiry-hours" min="1" max="48" required>
+                                    <small style="color: #64736d; font-size: 12px;">Standard safety window applied to new surplus food listings.</small>
+                                </div>
+
+                                <div class="settings-checkbox-wrap">
+                                    <input type="checkbox" id="set-allow-unverified">
+                                    <label for="set-allow-unverified" class="settings-checkbox-label">
+                                        <strong>Allow Unverified Donors to Post Listings</strong>
+                                        <small>When unchecked, newly registered donors must have their FSSAI or profile verified by an admin before posting food.</small>
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="dash-logout-btn" style="width: 100%; padding: 12px; font-size: 14px;">Save Platform Settings</button>
+                            </form>
+                        </div>
+
+                        <!-- Danger Zone Card -->
+                        <div class="settings-card danger-zone">
+                            <h3>Danger Zone</h3>
+                            <p>
+                                Resetting platform data will wipe all current listings, requests, distributions, and custom modifications from localStorage, and restore the initial seed dataset.
+                            </p>
+                            <button type="button" class="btn-sm btn-danger" id="reset-demo-btn" style="padding: 12px 20px; font-weight: 700; width: 100%;">
+                                Reset All Platform Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SLIDE-IN VIEW DRAWER (Users, Listings, Requests)
+         ═══════════════════════════════════════════════════════════════ -->
+    <div class="view-drawer" id="view-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+        <div class="drawer-header">
+            <h3 id="drawer-title">Entity Details</h3>
+            <button type="button" class="drawer-close" id="drawer-close" aria-label="Close details panel">✕</button>
         </div>
+        <div class="drawer-content" id="drawer-content"></div>
+    </div>
 
-    </main>
+    <!-- ═══════════════════════════════════════════════════════════════
+         CUSTOM MODALS (Accessible, Focus-trapped, No alert/confirm)
+         ═══════════════════════════════════════════════════════════════ -->
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Guard: role must be 'admin'
-            const session = FFGStore.getSession();
-            if (!session || session.role !== 'admin') {
-                window.location.href = 'admin-login.html';
-                return;
-            }
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirm-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="modal-box">
+            <h3 class="modal-title" id="confirm-title">Confirm Action</h3>
+            <p class="modal-msg" id="confirm-msg">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" id="confirm-cancel">Cancel</button>
+                <button type="button" class="modal-confirm" id="confirm-ok">Proceed</button>
+            </div>
+        </div>
+    </div>
 
-            // Read stats from FFGStore
-            const donors = FFGStore.getAll('ffg_donors') || [];
-            const ngos = FFGStore.getAll('ffg_ngos') || [];
-            const listings = FFGStore.getAll('ffg_listings') || [];
-            const distributions = FFGStore.getAll('ffg_distributions') || [];
+    <!-- Reject Reason Modal -->
+    <div class="modal-overlay" id="reject-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reject-title">
+        <div class="modal-box">
+            <h3 class="modal-title" id="reject-title">Specify Rejection Reason</h3>
+            <p class="modal-msg" style="margin-bottom: 12px;">Please provide clear feedback for why this organization registration is being rejected.</p>
+            <label for="reject-reason" class="sr-only">Rejection Reason</label>
+            <textarea id="reject-reason" rows="4" style="width: 100%; padding: 12px; border: 1px solid #dfe3da; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; box-sizing: border-box; resize: vertical;" placeholder="e.g., Unclear NGO certificate scan; registration number not found on Darpan portal…"></textarea>
+            <div id="reject-error" class="form-error" style="display: none; margin-top: 6px;"></div>
+            <div class="modal-actions" style="margin-top: 18px;">
+                <button type="button" class="modal-cancel" id="reject-cancel">Cancel</button>
+                <button type="button" class="modal-confirm btn-sm btn-danger" id="reject-submit">Confirm Rejection</button>
+            </div>
+        </div>
+    </div>
 
-            const pendingNgos = ngos.filter(n => n.verification_status === 'pending');
-            const activeListings = listings.filter(l => l.status === 'available' || l.status === 'requested');
-            const completedDistributions = distributions.length || listings.filter(l => l.status === 'distributed').length;
+    <!-- Add Admin Modal -->
+    <div class="modal-overlay" id="add-admin-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="add-admin-title">
+        <div class="modal-box" style="max-width: 480px;">
+            <h3 class="modal-title" id="add-admin-title">Add Administrator</h3>
+            <form id="add-admin-form" novalidate>
+                <div class="settings-field">
+                    <label for="aa-name">Full Name</label>
+                    <input type="text" id="aa-name" required placeholder="e.g., Priya Verma">
+                </div>
+                <div class="settings-field">
+                    <label for="aa-email">Email Address</label>
+                    <input type="email" id="aa-email" required placeholder="e.g., priya@foodforgood.in">
+                </div>
+                <div class="settings-field">
+                    <label for="aa-phone">Phone Number</label>
+                    <input type="tel" id="aa-phone" placeholder="e.g., 9876543210">
+                </div>
+                <div class="settings-field">
+                    <label for="aa-password">Password (Min 8 Characters)</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="aa-password" minlength="8" data-toggle required>
+                    </div>
+                </div>
+                <div class="settings-field">
+                    <label for="aa-confirm">Confirm Password</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="aa-confirm" data-toggle required>
+                    </div>
+                </div>
+                <div id="aa-error" class="form-error" style="display: none;"></div>
+                <div class="modal-actions" style="margin-top: 18px;">
+                    <button type="button" class="modal-cancel" id="aa-cancel">Cancel</button>
+                    <button type="submit" class="modal-confirm" id="aa-submit">Create Admin Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            document.getElementById('stat-donors').textContent = donors.length;
-            document.getElementById('stat-pending-ngos').textContent = pendingNgos.length;
-            document.getElementById('stat-active-listings').textContent = activeListings.length;
-            document.getElementById('stat-distributions').textContent = completedDistributions;
+    <!-- Password Reset Result Modal -->
+    <div class="modal-overlay" id="reset-pw-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reset-pw-title">
+        <div class="modal-box">
+            <h3 class="modal-title" id="reset-pw-title">Temporary Password Generated</h3>
+            <p class="modal-msg" style="margin-bottom: 12px;">The user's password has been successfully reset. Share this temporary password with them securely:</p>
+            <div style="background: #f8f6ef; border: 1px dashed #174c42; border-radius: 12px; padding: 14px; text-align: center; margin-bottom: 16px;">
+                <code id="reset-pw-result" style="font-family: monospace; font-size: 18px; font-weight: 700; color: #174c42; letter-spacing: 1px;"></code>
+            </div>
+            <p style="font-size: 12px; color: #64736d; margin: 0 0 16px 0;">Advise the user to immediately change this password upon their next login.</p>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel" id="reset-pw-close">Close</button>
+            </div>
+        </div>
+    </div>
 
-            document.getElementById('admin-logout-btn').addEventListener('click', () => FFGStore.logout());
-            document.getElementById('admin-page-logout').addEventListener('click', () => FFGStore.logout());
-        });
-    </script>
+    <!-- Reset Platform Data Modal (Danger Zone) -->
+    <div class="modal-overlay" id="reset-data-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reset-data-title">
+        <div class="modal-box">
+            <h3 class="modal-title" id="reset-data-title" style="color: #c0392b;">Reset Platform Demo Data</h3>
+            <p class="modal-msg" style="margin-bottom: 12px;">This will clear all registered users, listings, requests, and activity logs from your browser's localStorage and reload the fresh demo dataset.</p>
+            <p style="font-size: 13px; font-weight: 600; color: #172321; margin-bottom: 8px;">Type <strong>RESET</strong> in capital letters to confirm:</p>
+            <label for="reset-data-input" class="sr-only">Type RESET to confirm</label>
+            <input type="text" id="reset-data-input" style="width: 100%; padding: 10px 14px; border: 1px solid #dfe3da; border-radius: 10px; font-size: 14px; box-sizing: border-box; text-transform: uppercase;" placeholder="RESET">
+            <div id="reset-data-error" class="form-error" style="display: none; margin-top: 6px;"></div>
+            <div class="modal-actions" style="margin-top: 18px;">
+                <button type="button" class="modal-cancel" id="reset-data-cancel">Cancel</button>
+                <button type="button" class="modal-confirm btn-danger-confirm" id="reset-data-submit">Reset Everything</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Container -->
+    <div class="admin-toast-container" id="admin-toast-container"></div>
 
 </body>
 
 </html>
-

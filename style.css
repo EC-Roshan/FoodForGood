@@ -1726,6 +1726,31 @@ header.navbar.navbar-scrolled {
   .nav-links a:last-child {
     border-bottom: none;
   }
+
+  .nav-logout {
+    display: none !important;
+  }
+
+  .nav-links a.nav-logout-mobile {
+    display: block !important;
+    color: #c0392b !important;
+    font-weight: 700;
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px dashed #dfe3da;
+    border-bottom: none;
+  }
+}
+
+.nav-logout-mobile {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .nav-login {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
 }
 
 @keyframes fadeDownMenu {

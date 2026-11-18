@@ -968,6 +968,100 @@ button.pw-toggle:focus,
   }
 
   .dash-navbar {
-    padding: 0 16px;
+    padding: 0 14px;
+  }
+
+  .dash-logo-text {
+    display: none;
+  }
+
+  .dash-user-name {
+    max-width: 105px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   NGO DASHBOARD EXTENSIONS — Verification banners, filters & badges
+   ═══════════════════════════════════════════════════════════════════ */
+
+.verification-banner {
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.verification-banner .banner-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.banner-pending {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  color: #856404;
+}
+
+.banner-rejected {
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+  color: #c0392b;
+}
+
+.browse-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  background: #ffffff;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid #dfe3da;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #dfe3da;
+  background: #f8f6ef;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #172321;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #174c42;
+  background: #ffffff;
+}
+
+.card-badge-requested {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.char-counter {
+  font-size: 11px;
+  color: #64736d;
+  text-align: right;
+  margin-top: -8px;
+  margin-bottom: 12px;
+}
+
