@@ -243,8 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.innerHTML = topEvents.map(e => `
             <div class="activity-item">
+                <span class="activity-icon">🔔</span>
+                <span class="activity-text" style="flex: 1;">${escapeHtml(e.text)}</span>
                 <span class="activity-time">${formatRelativeTime(e.time)}</span>
-                <span class="activity-text">${escapeHtml(e.text)}</span>
             </div>
         `).join('');
     }
@@ -1237,9 +1238,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { once: true });
     }
 
-    function showToast(message) {
+    function showToast(message, type = 'success') {
         if (typeof showMessage === 'function') {
-            showMessage(document.body, message, 'success');
+            showMessage(null, message, type);
         } else {
             console.log(message);
         }

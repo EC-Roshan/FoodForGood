@@ -63,7 +63,7 @@
   font-size: 13px;
   font-weight: 600;
   color: #64736d;
-  max-width: 140px;
+  max-width: 280px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1064,4 +1064,48 @@ button.pw-toggle:focus,
   margin-top: -8px;
   margin-bottom: 12px;
 }
+
+/* ── Toast Notifications ── */
+.ffg-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  color: #ffffff;
+  background: #174c42;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  pointer-events: none;
+}
+
+.ffg-toast--show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.ffg-toast--success {
+  background: #174c42;
+  border: 1px solid #c7e86b;
+  color: #ffffff;
+}
+
+.ffg-toast--error {
+  background: #c0392b;
+  color: #ffffff;
+}
+
+.ffg-toast--info {
+  background: #0e392f;
+  color: #ffffff;
+}
+
 

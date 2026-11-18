@@ -12,7 +12,8 @@
   function showMessage(container, text, type = 'info', duration = 4000) {
     let el = typeof container === 'string' ? document.querySelector(container) : container;
 
-    if (el) {
+    // Only inject inline if container is a valid content container (never body or html)
+    if (el && el !== document.body && el !== document.documentElement) {
       el.textContent = text;
       el.className = 'form-message form-message--' + type;
       el.style.display = 'block';

@@ -2452,3 +2452,4 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialHash = window.location.hash.replace('#', '') || 'overview';
     switchSection(initialHash, false);
 });
+
