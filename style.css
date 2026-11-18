@@ -1640,10 +1640,9 @@ h1 span::after {
    Sticky navbar, mobile menu, animations, counters, back-to-top
    ============================================================ */
 
-/* Sticky Navbar */
+/* Navbar (Non-sticky: scrolls naturally with page) */
 header.navbar {
-  position: sticky;
-  top: 0;
+  position: relative;
   background: var(--cream);
   z-index: 100;
   transition: box-shadow 0.3s ease, background 0.3s ease;
@@ -1651,8 +1650,6 @@ header.navbar {
 
 header.navbar.navbar-scrolled {
   box-shadow: 0 4px 20px rgba(23, 76, 66, 0.08);
-  background: rgba(248, 246, 239, 0.96);
-  backdrop-filter: blur(8px);
 }
 
 /* Active Nav Link */
