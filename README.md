@@ -59,6 +59,16 @@ The mock database auto-seeds verified demo accounts upon first load:
 
 ---
 
+## 📑 Project Documentation & Reports
+
+The repository includes official project documentation and reports:
+
+- 📄 [**Project Report v2 (PDF)**](Food_For_Good_Project_Report_v2.pdf) — Complete project report with system architecture, requirements, and implementation details.
+- 📄 [**Project Documentation (FOOD-FOR-GOOD1.pdf)**](FOOD-FOR-GOOD1.pdf) — Supplementary documentation.
+- 📄 [**Project Synopsis (PDF)**](synopsis.pdf) — Project synopsis covering objectives, scope, and problem statement.
+
+---
+
 ## 🔄 How to Reset Demo Data
 
 To clear all created listings, requests, sessions, and test users, and re-seed clean demo records:
