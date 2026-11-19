@@ -486,6 +486,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchEl = document.getElementById('browse-search');
     if (searchEl) searchEl.addEventListener('input', applyBrowseFilters);
 
+    // Refresh button — re-fetches localStorage and re-renders all cards
+    const refreshBtn = document.getElementById('browse-refresh-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            refreshBtn.textContent = '⏳ Refreshing…';
+            refreshBtn.disabled = true;
+            setTimeout(() => {
+                renderBrowse();
+                refreshBtn.textContent = '🔄 Refresh Listings';
+                refreshBtn.disabled = false;
+            }, 300);
+        });
+    }
+
     function buildListingCardHtml(l, isCompact, isNearest = false) {
         const donor = FFGStore.getById('ffg_donors', l.donor_id);
         const donorName = donor ? (donor.org_name || 'Food Donor') : 'Food Donor';

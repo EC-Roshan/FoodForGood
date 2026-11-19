@@ -92,8 +92,11 @@
 
             <!-- 2. BROWSE FOOD -->
             <section id="section-browse" class="dash-section" style="display:none">
-                <h2 class="dash-section-title">Browse Surplus Food</h2>
-                <p style="color:#64736d;font-size:14px;margin-top:-8px;margin-bottom:20px;">Discover available donations from verified food providers and request pickup.</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
+                    <h2 class="dash-section-title" style="margin:0;">Browse Surplus Food</h2>
+                    <button id="browse-refresh-btn" style="background:#f0f7ee;border:1px solid #dfe3da;color:#174c42;font-size:13px;font-weight:600;padding:7px 16px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" title="Reload latest listings">🔄 Refresh Listings</button>
+                </div>
+                <p style="color:#64736d;font-size:14px;margin-top:4px;margin-bottom:20px;">Discover available donations from verified food providers and request pickup.</p>
 
                 <!-- Filters -->
                 <div class="browse-filter-bar">
