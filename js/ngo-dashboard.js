@@ -31,6 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
         renderActiveSection();
     }, 60000);
 
+    // Auto-refresh browse when donor adds a listing in another tab (same domain)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'ffg_listings') {
+            if (typeof renderBrowse === 'function' && currentSection === 'browse') {
+                renderBrowse();
+            }
+        }
+    });
+
     // Set navbar info
     document.getElementById('dash-user-name').textContent = ngo.ngo_name || user.full_name;
     document.getElementById('dash-logout-btn').addEventListener('click', () => FFGStore.logout());
@@ -393,50 +402,59 @@ document.addEventListener('DOMContentLoaded', () => {
         const allListings = FFGStore.getAll('ffg_listings');
         const now = Date.now();
 
-        // ── Debug: log all listings and why they pass/fail ──
-        console.group('[FFG Browse Debug] All listings in localStorage: ' + allListings.length);
-        allListings.forEach(l => {
-            const expMs  = new Date(l.expires_at).getTime();
-            const passed = (l.status === 'available' || l.status === 'requested') && expMs > now;
-            const timeLeft = Math.round((expMs - now) / 60000);
-            console.log(
-                passed ? '✅ VISIBLE' : '❌ HIDDEN',
-                `"${l.food_name}"`,
-                '| status:', l.status,
-                '| expires_at:', l.expires_at,
-                '| mins left:', timeLeft,
-                '| expMs > now:', expMs > now
-            );
-        });
-        console.groupEnd();
-
-        // Only available or requested listings not yet expired
-        let items = allListings.filter(l =>
+        // ── Step 1: Gather ALL available/requested listings (pre-filter info for debug) ──
+        const debugPanel = document.getElementById('browse-debug-panel');
+        const debugInfo  = document.getElementById('browse-debug-info');
+        const preFilter  = allListings.filter(l =>
             (l.status === 'available' || l.status === 'requested') &&
             new Date(l.expires_at).getTime() > now
         );
 
-        // Filter: City
+        // Show debug panel if 0 visible items but listings exist in storage
+        if (debugPanel && debugInfo) {
+            if (allListings.length > 0 && preFilter.length === 0) {
+                let html = `<b>Total listings in storage: ${allListings.length}</b><br>`;
+                allListings.forEach(l => {
+                    const expMs = new Date(l.expires_at).getTime();
+                    const minsLeft = Math.round((expMs - now) / 60000);
+                    const isAvail = l.status === 'available' || l.status === 'requested';
+                    const notExp  = expMs > now;
+                    html += `• <b>"${escapeHtml(l.food_name)}"</b> — status: <b>${l.status}</b>, expires: ${minsLeft > 0 ? minsLeft + ' mins from now' : 'EXPIRED ' + Math.abs(minsLeft) + ' mins ago'}`;
+                    if (!isAvail) html += ' <span style="color:#c0392b">[hidden: not available]</span>';
+                    if (!notExp)  html += ' <span style="color:#c0392b">[hidden: expired]</span>';
+                    if (isAvail && notExp) html += ' <span style="color:#174c42">[should be visible — city filter may be hiding it]</span>';
+                    html += '<br>';
+                });
+                debugInfo.innerHTML = html;
+                debugPanel.style.display = 'block';
+            } else {
+                debugPanel.style.display = 'none';
+            }
+        }
+
+        // ── Step 2: Base filter ──
+        let items = preFilter;
+
+        // ── Step 3: City filter ──
         const cityFilter = document.getElementById('browse-city').value;
         if (cityFilter && cityFilter !== 'all') {
             const cLower = cityFilter.toLowerCase().trim();
             items = items.filter(l => {
-                const donor = FFGStore.getById('ffg_donors', l.donor_id);
+                const donor    = FFGStore.getById('ffg_donors', l.donor_id);
                 const donorCity = donor ? (donor.city || '').toLowerCase().trim() : '';
-                const addr = (l.pickup_address || '').toLowerCase();
-                // Match if donor city contains filter word OR address contains filter word
-                return donorCity.includes(cLower) || cLower.includes(donorCity) ||
-                       addr.includes(cLower);
+                const addr     = (l.pickup_address || '').toLowerCase();
+                // Broad match: city contains filter, filter contains city, or address contains filter keyword
+                return donorCity.includes(cLower) || cLower.includes(donorCity) || addr.includes(cLower);
             });
         }
 
-        // Filter: Food Type
+        // ── Step 4: Food Type filter ──
         const typeFilter = document.getElementById('browse-type').value;
         if (typeFilter && typeFilter !== 'all') {
             items = items.filter(l => l.food_type === typeFilter);
         }
 
-        // Filter: Expiring Within
+        // ── Step 5: Expiring-within filter ──
         const expiryFilter = document.getElementById('browse-expiry').value;
         if (expiryFilter && expiryFilter !== 'all') {
             const hours = parseFloat(expiryFilter);
@@ -447,18 +465,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Filter: Search
+        // ── Step 6: Search filter ──
         const searchVal = document.getElementById('browse-search').value.toLowerCase().trim();
         if (searchVal) {
             items = items.filter(l => {
-                const donor = FFGStore.getById('ffg_donors', l.donor_id);
+                const donor    = FFGStore.getById('ffg_donors', l.donor_id);
                 const donorName = donor ? (donor.org_name || '').toLowerCase() : '';
-                const foodName = (l.food_name || '').toLowerCase();
+                const foodName  = (l.food_name || '').toLowerCase();
                 return foodName.includes(searchVal) || donorName.includes(searchVal);
             });
         }
 
-        // Sort
+        // ── Step 7: Sort ──
         const sortVal = document.getElementById('browse-sort').value;
         if (sortVal === 'nearest') {
             items.sort((a, b) => getListingTransitInfo(a).distanceKm - getListingTransitInfo(b).distanceKm);
@@ -470,18 +488,16 @@ document.addEventListener('DOMContentLoaded', () => {
             items.sort((a, b) => parseFloat(b.quantity) - parseFloat(a.quantity));
         }
 
-        // Identify closest listing id
+        // ── Step 8: Identify closest ──
         let closestId = null;
         let minDistance = Infinity;
         items.forEach(l => {
             const dist = getListingTransitInfo(l).distanceKm;
-            if (dist < minDistance) {
-                minDistance = dist;
-                closestId = l.listing_id;
-            }
+            if (dist < minDistance) { minDistance = dist; closestId = l.listing_id; }
         });
 
-        const grid = document.getElementById('browse-grid');
+        // ── Step 9: Render ──
+        const grid  = document.getElementById('browse-grid');
         const empty = document.getElementById('browse-empty');
 
         if (items.length === 0) {
