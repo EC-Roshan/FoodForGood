@@ -150,15 +150,16 @@
     /* ── session management ─────────────────────────────────────── */
 
     /**
-     * Returns the current session object, checking localStorage first, then sessionStorage.
+     * Returns the current session object, checking sessionStorage first (tab-scoped), then localStorage.
+     * This allows simultaneous multi-tab testing (e.g. Donor in Tab 1, NGO in Tab 2).
      * @returns {Object|null}
      */
     getSession() {
       try {
-        const ls = localStorage.getItem(SESSION_KEY);
-        if (ls) return JSON.parse(ls);
         const ss = sessionStorage.getItem(SESSION_KEY);
         if (ss) return JSON.parse(ss);
+        const ls = localStorage.getItem(SESSION_KEY);
+        if (ls) return JSON.parse(ls);
       } catch (_) {}
       return null;
     },
@@ -170,12 +171,9 @@
      */
     setSession(user, remember) {
       const payload = JSON.stringify({ user_id: user.user_id, role: user.role });
+      sessionStorage.setItem(SESSION_KEY, payload);
       if (remember) {
         localStorage.setItem(SESSION_KEY, payload);
-        sessionStorage.removeItem(SESSION_KEY);
-      } else {
-        sessionStorage.setItem(SESSION_KEY, payload);
-        localStorage.removeItem(SESSION_KEY);
       }
     },
 

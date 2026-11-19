@@ -215,14 +215,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const editId = document.getElementById('edit-listing-id').value;
+        const prepVal = document.getElementById('prepared-at').value;
+        const expVal = document.getElementById('expires-at').value;
+
         const data = {
             donor_id: donor.donor_id,
             food_name: document.getElementById('food-name').value.trim(),
             food_type: selectedFoodType.value,
             quantity: parseFloat(document.getElementById('quantity').value),
             unit: document.getElementById('unit').value,
-            prepared_at: document.getElementById('prepared-at').value,
-            expires_at: document.getElementById('expires-at').value,
+            prepared_at: prepVal ? new Date(prepVal).toISOString() : new Date().toISOString(),
+            expires_at: expVal ? new Date(expVal).toISOString() : new Date(Date.now() + 6 * 3600 * 1000).toISOString(),
             pickup_address: document.getElementById('pickup-address').value.trim(),
             notes: document.getElementById('notes').value.trim()
         };
