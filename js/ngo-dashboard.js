@@ -361,8 +361,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ngo.city) cities.add(ngo.city);
 
         activeListings.forEach(l => {
+            // Add donor's registered city
             const donor = FFGStore.getById('ffg_donors', l.donor_id);
             if (donor && donor.city) cities.add(donor.city);
+
+            // Also extract city from pickup_address if it contains a known city name
+            // This ensures listings with pickup addresses in different cities are discoverable
+            if (l.pickup_address) {
+                const addrLower = l.pickup_address.toLowerCase();
+                const knownCities = ['ghaziabad', 'noida', 'greater noida', 'delhi', 'meerut', 'indirapuram', 'vaishali'];
+                knownCities.forEach(kc => {
+                    if (addrLower.includes(kc)) {
+                        // Capitalise properly for display
+                        const displayCity = kc.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                        cities.add(displayCity);
+                    }
+                });
+            }
         });
 
         let opts = `<option value="all">All Cities</option>`;
@@ -392,7 +407,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const donor = FFGStore.getById('ffg_donors', l.donor_id);
                 const donorCity = donor ? (donor.city || '').toLowerCase().trim() : '';
                 const addr = (l.pickup_address || '').toLowerCase();
-                return donorCity === cLower || addr.includes(cLower);
+                // Match if donor city contains filter word OR address contains filter word
+                return donorCity.includes(cLower) || cLower.includes(donorCity) ||
+                       addr.includes(cLower);
             });
         }
 
