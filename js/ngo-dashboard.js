@@ -393,6 +393,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const allListings = FFGStore.getAll('ffg_listings');
         const now = Date.now();
 
+        // ── Debug: log all listings and why they pass/fail ──
+        console.group('[FFG Browse Debug] All listings in localStorage: ' + allListings.length);
+        allListings.forEach(l => {
+            const expMs  = new Date(l.expires_at).getTime();
+            const passed = (l.status === 'available' || l.status === 'requested') && expMs > now;
+            const timeLeft = Math.round((expMs - now) / 60000);
+            console.log(
+                passed ? '✅ VISIBLE' : '❌ HIDDEN',
+                `"${l.food_name}"`,
+                '| status:', l.status,
+                '| expires_at:', l.expires_at,
+                '| mins left:', timeLeft,
+                '| expMs > now:', expMs > now
+            );
+        });
+        console.groupEnd();
+
         // Only available or requested listings not yet expired
         let items = allListings.filter(l =>
             (l.status === 'available' || l.status === 'requested') &&
