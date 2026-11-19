@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = Date.now();
         const threeHours = 3 * 3600 * 1000;
 
-        const expiring = cityListings.filter(l => {
+        let expiring = cityListings.filter(l => {
             const exp = new Date(l.expires_at).getTime();
             return (exp > now) && ((exp - now) <= threeHours);
         });
@@ -180,7 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        container.innerHTML = expiring.map(l => buildListingCardHtml(l, true)).join('');
+        // Prioritize closest expiring food first
+        expiring.sort((a, b) => getListingTransitInfo(a).distanceKm - getListingTransitInfo(b).distanceKm);
+        const closestId = expiring[0].listing_id;
+
+        container.innerHTML = expiring.map(l => buildListingCardHtml(l, true, l.listing_id === closestId)).join('');
         attachListingCardEvents(container);
     }
 
@@ -251,7 +255,91 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ═══════════════════════════════════════════════
-    //  5. BROWSE FOOD SECTION
+    //  5. TRANSIT DISTANCE & PRIORITY ENGINE (GEO CALCULATOR)
+    // ═══════════════════════════════════════════════
+    const GEO_LOCALITIES = {
+        'raj nagar': { lat: 28.6854, lng: 77.4422 },
+        'rdc': { lat: 28.6750, lng: 77.4410 },
+        'indirapuram': { lat: 28.6415, lng: 77.3714 },
+        'vaishali': { lat: 28.6469, lng: 77.3392 },
+        'ghaziabad': { lat: 28.6692, lng: 77.4538 },
+        'muradnagar': { lat: 28.7844, lng: 77.5029 },
+        'sector 62': { lat: 28.6270, lng: 77.3725 },
+        'sector 18': { lat: 28.5708, lng: 77.3260 },
+        'sector 132': { lat: 28.5080, lng: 77.3780 },
+        'sector 15': { lat: 28.5835, lng: 77.3140 },
+        'noida': { lat: 28.5355, lng: 77.3910 },
+        'knowledge park': { lat: 28.4601, lng: 77.4940 },
+        'pari chowk': { lat: 28.4682, lng: 77.5085 },
+        'surajpur': { lat: 28.5200, lng: 77.4900 },
+        'greater noida': { lat: 28.4744, lng: 77.5040 },
+        'connaught place': { lat: 28.6315, lng: 77.2167 },
+        'chandni chowk': { lat: 28.6506, lng: 77.2303 },
+        'kashmere gate': { lat: 28.6675, lng: 77.2285 },
+        'pitampura': { lat: 28.7032, lng: 77.1325 },
+        'delhi': { lat: 28.6139, lng: 77.2090 },
+        'civil lines': { lat: 28.9950, lng: 77.7120 },
+        'cantt': { lat: 28.9800, lng: 77.7000 },
+        'meerut': { lat: 28.9845, lng: 77.7064 }
+    };
+
+    function resolveCoords(address, city) {
+        const text = ((address || '') + ' ' + (city || '')).toLowerCase();
+        for (const [key, coords] of Object.entries(GEO_LOCALITIES)) {
+            if (text.includes(key)) return coords;
+        }
+        const c = (city || '').toLowerCase();
+        if (c.includes('noida') && c.includes('greater')) return GEO_LOCALITIES['greater noida'];
+        if (c.includes('noida')) return GEO_LOCALITIES['noida'];
+        if (c.includes('ghaziabad')) return GEO_LOCALITIES['ghaziabad'];
+        if (c.includes('delhi')) return GEO_LOCALITIES['delhi'];
+        if (c.includes('meerut')) return GEO_LOCALITIES['meerut'];
+        return { lat: 28.6692, lng: 77.4538 }; // Default NCR center
+    }
+
+    function calculateDistanceAndDuration(fromAddr, fromCity, toAddr, toCity) {
+        const c1 = resolveCoords(fromAddr, fromCity);
+        const c2 = resolveCoords(toAddr, toCity);
+
+        const R = 6371; // Earth radius in km
+        const dLat = (c2.lat - c1.lat) * Math.PI / 180;
+        const dLng = (c2.lng - c1.lng) * Math.PI / 180;
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(c1.lat * Math.PI / 180) * Math.cos(c2.lat * Math.PI / 180) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const straight = R * c;
+
+        // Urban road detour multiplier (1.35x realistic driving path)
+        const factor = straight < 1.5 ? 1.15 : 1.35;
+        let km = straight * factor;
+        if (km < 0.6) km = 0.8;
+        km = Math.round(km * 10) / 10;
+
+        // Estimated transit speed ~25 km/h in NCR city traffic + 2 min dispatch buffer
+        const mins = Math.max(3, Math.round((km / 25) * 60) + 2);
+
+        return {
+            distanceKm: km,
+            durationMins: mins,
+            formattedDistance: `${km} km`,
+            formattedDuration: mins < 60 ? `${mins} mins` : `${Math.floor(mins / 60)}h ${mins % 60}m`
+        };
+    }
+
+    function getListingTransitInfo(listing) {
+        const donor = FFGStore.getById('ffg_donors', listing.donor_id);
+        const donorAddr = listing.pickup_address || (donor ? donor.address : '');
+        const donorCity = donor ? donor.city : '';
+        const ngoAddr = ngo ? (ngo.address || '') : '';
+        const ngoCity = ngo ? (ngo.city || '') : '';
+
+        return calculateDistanceAndDuration(ngoAddr, ngoCity, donorAddr, donorCity);
+    }
+
+    // ═══════════════════════════════════════════════
+    //  6. BROWSE FOOD SECTION
     // ═══════════════════════════════════════════════
     function renderBrowse() {
         FFGStore.expireListings();
@@ -338,13 +426,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Sort
         const sortVal = document.getElementById('browse-sort').value;
-        if (sortVal === 'expiring_soonest') {
+        if (sortVal === 'nearest') {
+            items.sort((a, b) => getListingTransitInfo(a).distanceKm - getListingTransitInfo(b).distanceKm);
+        } else if (sortVal === 'expiring_soonest') {
             items.sort((a, b) => new Date(a.expires_at) - new Date(b.expires_at));
         } else if (sortVal === 'newest') {
             items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         } else if (sortVal === 'largest_qty') {
             items.sort((a, b) => parseFloat(b.quantity) - parseFloat(a.quantity));
         }
+
+        // Identify closest listing id
+        let closestId = null;
+        let minDistance = Infinity;
+        items.forEach(l => {
+            const dist = getListingTransitInfo(l).distanceKm;
+            if (dist < minDistance) {
+                minDistance = dist;
+                closestId = l.listing_id;
+            }
+        });
 
         const grid = document.getElementById('browse-grid');
         const empty = document.getElementById('browse-empty');
@@ -356,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         empty.style.display = 'none';
-        grid.innerHTML = items.map(l => buildListingCardHtml(l, false)).join('');
+        grid.innerHTML = items.map(l => buildListingCardHtml(l, false, l.listing_id === closestId)).join('');
         attachListingCardEvents(grid);
     }
 
@@ -368,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchEl = document.getElementById('browse-search');
     if (searchEl) searchEl.addEventListener('input', applyBrowseFilters);
 
-    function buildListingCardHtml(l, isCompact) {
+    function buildListingCardHtml(l, isCompact, isNearest = false) {
         const donor = FFGStore.getById('ffg_donors', l.donor_id);
         const donorName = donor ? (donor.org_name || 'Food Donor') : 'Food Donor';
         const donorType = donor ? formatDonorType(donor.donor_type) : 'Provider';
@@ -380,6 +481,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const expMs = new Date(l.expires_at).getTime() - Date.now();
         const isUrgent = expMs < 3600 * 1000;
         const countdownText = formatCountdown(expMs);
+
+        // Transit Distance and Driving Route
+        const transit = getListingTransitInfo(l);
+        const ngoFullAddr = `${ngo ? ngo.address : ''}, ${ngo ? ngo.city : ''}`;
+        const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ngoFullAddr)}&destination=${encodeURIComponent(l.pickup_address || city)}`;
+
+        const transitHtml = `
+            <div class="distance-badge-row">
+                <div class="distance-pill ${isNearest ? 'distance-pill-nearest' : ''}" title="Estimated driving distance from your NGO">
+                    <span class="distance-icon">🚗</span>
+                    <strong>${transit.formattedDistance}</strong> away
+                    <span class="distance-time">· ~${transit.formattedDuration}</span>
+                </div>
+                ${isNearest ? '<span class="nearest-chip">⚡ Nearest to you</span>' : ''}
+                <a href="${mapUrl}" target="_blank" rel="noopener" class="route-link" title="Open driving directions in Google Maps">
+                    🗺️ Directions
+                </a>
+            </div>
+        `;
 
         // Check if current NGO already has a pending or approved request
         const existingReq = FFGStore.findAllBy('ffg_requests', 'listing_id', l.listing_id)
@@ -427,6 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="listing-meta" style="font-size:12px;color:#64736d;">
                     Pickup: ${escapeHtml(l.pickup_address)}
                 </div>
+                ${transitHtml}
                 <div class="listing-countdown ${isUrgent ? 'countdown-urgent' : ''}">
                     ⏱ Safe for ${countdownText}
                 </div>
@@ -478,6 +599,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('req-food-name').textContent = l.food_name;
         document.getElementById('req-max-qty').textContent = `${l.quantity} ${l.unit}`;
         document.getElementById('req-donor-info').textContent = `${donorName} (${donor ? donor.city : ''})`;
+
+        // Populate distance, transit time & Google Maps route in request modal
+        const transit = getListingTransitInfo(l);
+        const distEl = document.getElementById('req-distance-info');
+        if (distEl) {
+            distEl.textContent = `${transit.formattedDistance} · ~${transit.formattedDuration} driving`;
+        }
+        const routeLink = document.getElementById('req-route-link');
+        if (routeLink) {
+            const ngoFullAddr = `${ngo ? ngo.address : ''}, ${ngo ? ngo.city : ''}`;
+            routeLink.href = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(ngoFullAddr)}&destination=${encodeURIComponent(l.pickup_address || (donor ? donor.city : ''))}`;
+        }
 
         const qtyInput = document.getElementById('req-qty');
         qtyInput.value = l.quantity;

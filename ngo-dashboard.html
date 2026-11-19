@@ -117,6 +117,7 @@
                     </select>
 
                     <select id="browse-sort" class="filter-select" aria-label="Sort By">
+                        <option value="nearest" selected>📍 Nearest to You (Priority)</option>
                         <option value="expiring_soonest">Expiring Soonest</option>
                         <option value="newest">Newest First</option>
                         <option value="largest_qty">Largest Quantity</option>
@@ -322,6 +323,10 @@
                     <div><strong>Food:</strong> <span id="req-food-name">—</span></div>
                     <div style="margin-top:4px;"><strong>Available Quantity:</strong> <span id="req-max-qty">—</span></div>
                     <div style="margin-top:4px;"><strong>Donor:</strong> <span id="req-donor-info">—</span></div>
+                    <div style="margin-top:6px;padding-top:6px;border-top:1px dashed #dfe3da;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+                        <div>🚗 <strong>Transit:</strong> <span id="req-distance-info" style="color:#174c42;font-weight:700;">—</span></div>
+                        <a id="req-route-link" href="#" target="_blank" rel="noopener" style="color:#174c42;font-size:12px;font-weight:600;text-decoration:underline;">🗺️ View Driving Route</a>
+                    </div>
                 </div>
 
                 <label for="req-qty">Quantity Needed <span class="req">*</span></label>

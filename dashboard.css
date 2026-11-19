@@ -1108,4 +1108,67 @@ button.pw-toggle:focus,
   color: #ffffff;
 }
 
+/* ── Distance & Transit Routing Badges ── */
+.distance-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.distance-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f0f7ee;
+  border: 1px solid #dfe3da;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #172321;
+}
+
+.distance-pill strong {
+  color: #174c42;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+}
+
+.distance-pill.distance-pill-nearest {
+  background: #dcf5e4;
+  border-color: #174c42;
+  box-shadow: 0 2px 8px rgba(23, 76, 66, 0.08);
+}
+
+.nearest-chip {
+  background: #c7e86b;
+  color: #174c42;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.route-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: #174c42;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: opacity 0.18s;
+  margin-left: auto;
+}
+
+.route-link:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+
 
